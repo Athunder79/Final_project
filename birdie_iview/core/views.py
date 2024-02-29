@@ -5,6 +5,7 @@ from django.http import HttpResponse,JsonResponse
 from .models import Coordinates
 from django.views.generic import CreateView, DetailView,ListView
 
+
 def home(request):
     if request.method == 'POST':
         latitude = request.POST.get('latitude')
