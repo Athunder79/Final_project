@@ -24,8 +24,8 @@ function getLocation()
   {
   lat=position.coords.latitude;
   lon=position.coords.longitude;
-  latitude.value= lat;
-  longitude.value= lon;
+  id_latitude.value= lat;
+  id_longitude.value= lon;
 
   }
 
