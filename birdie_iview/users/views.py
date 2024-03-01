@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ClubsForm
+from .models import Clubs
 
 def register(request):
     if request.method == 'POST':
@@ -19,9 +20,7 @@ def register(request):
 def profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST,
-                                   request.FILES,
-                                   instance=request.user.profile)
+        p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
@@ -33,7 +32,29 @@ def profile(request):
 
     context = {
         'u_form': u_form,
-        'p_form': p_form
+        'p_form': p_form,
     }
 
     return render(request, 'users/profile.html', context)
+
+def clubs(request):
+
+    user_clubs = Clubs.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        c_form = ClubsForm(request.POST)
+        if c_form.is_valid():
+            # Set the user field before saving the form
+            c_form.instance.user = request.user
+            c_form.save()
+            messages.success(request, f'Your club has been added')
+            return redirect('clubs')
+    else:
+        c_form = ClubsForm()
+
+    context = {
+        'c_form': c_form,
+        'user_clubs': user_clubs
+    }
+
+    return render(request, 'users/clubs.html', context)     

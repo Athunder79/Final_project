@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from crispy_forms.helper import FormHelper,Layout
 from crispy_forms.layout import Submit
-from .models import Profile
+from .models import Profile, Clubs
 
 User = get_user_model()
 
@@ -31,3 +31,9 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['address1', 'address2', 'city', 'country']
+
+
+class ClubsForm(forms.ModelForm):
+    class Meta:
+        model = Clubs
+        fields = ['club_name', 'club_type']
