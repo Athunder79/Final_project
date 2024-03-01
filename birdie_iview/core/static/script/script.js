@@ -7,9 +7,9 @@ addEventListener('DOMContentLoaded', function () {
   location.addEventListener("click", getLocation);
 })
 
-
 let x = document.getElementById("result");
 
+// Get the latitude and longitude from browser
 function getLocation()
   {
   if (navigator.geolocation)
@@ -19,14 +19,14 @@ function getLocation()
   else{x.innerHTML="Geolocation is not supported by this browser.";}
   }
 
-
+// add the latitude and longitude to the form and post
   function showPosition(position)
   {
   lat=position.coords.latitude;
   lon=position.coords.longitude;
-  id_latitude.value= lat;
-  id_longitude.value= lon;
-
+  document.getElementById("id_latitude").value= lat;
+  document.getElementById("id_longitude").value= lon;
+  document.getElementById('myForm').submit()
   }
 
   function showError(error)

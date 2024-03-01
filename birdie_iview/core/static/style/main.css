@@ -7,7 +7,7 @@ body {
 
 
 .bg-green {
-  background-color: #2f5946;
+  background-color: #07f188;
 }
 
 .site-header .navbar-nav .nav-link {
@@ -75,4 +75,8 @@ a.article-title:hover {
 
 .account-heading {
   font-size: 2.5rem;
+}
+
+.hide-input {
+  display: none;  
 }
