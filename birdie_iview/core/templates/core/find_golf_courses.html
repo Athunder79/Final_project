@@ -1,0 +1,20 @@
+
+{% extends "core/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% csrf_token %}
+    <h1>Birdie-iView Home!</h1>
+
+    <ul>
+        {% for course in golf_courses %}
+        <li>
+            <strong>{{ course.name }}</strong><br>
+            Address: {{ course.address }}<br>
+            Rating: {{ course.rating }}<br>
+            Latitude: {{ course.location.lat }}<br>
+            Longitude: {{ course.location.lng }}
+        </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
