@@ -44,7 +44,7 @@ def find_golf_courses(request):
                     'name': place['name'],
                     'address': place['vicinity'],
                     'rating': place.get('rating', None),
-                   
+                    'latitude': place['geometry']['location']['lat'], 
                     'longitude': place['geometry']['location']['lng'],
                 }
                 # Check for duplicates based on coordinates
