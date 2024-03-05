@@ -3,6 +3,7 @@ from crispy_forms.layout import Layout, Field
 from django import forms
 from .models import Shot
 
+
 class ShotForm(forms.ModelForm):
     class Meta:
         model = Shot

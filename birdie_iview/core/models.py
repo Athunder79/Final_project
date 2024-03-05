@@ -3,17 +3,18 @@ from django.db.models import F
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from math import radians, sin, cos, sqrt, atan2
+from users.models import Clubs
 
 User = get_user_model()
 
 class Shot(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    club = models.CharField(max_length=100)
+    club = models.ForeignKey(Clubs, on_delete=models.CASCADE)
     latitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=False)
     longitude = models.DecimalField(max_digits=9, decimal_places=7 , blank=True, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    shot_distance = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    shot_distance = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse('scorecard-create')
@@ -28,17 +29,20 @@ class Shot(models.Model):
                 current_lat = radians(float(self.latitude))
                 current_lon = radians(float(self.longitude))
 
+                # Difference in coordinates
                 dlon = current_lon - previous_lon
                 dlat = current_lat - previous_lat
 
+                # Haversine formula
                 a = sin(dlat / 2)**2 + cos(previous_lat) * cos(current_lat) * sin(dlon / 2)**2
                 c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-                distance = 6371 * c  # Radius of the Earth in kilometers
+                # Radius of the Earth in kilometers * c *1000 to get metres
+                distance = 6371 * c 
 
                 # Update previous shot's distance
                 previous_shot.shot_distance = distance
-                previous_shot.save(update_fields=['shot_distance'])  # Update only shot_distance field
+                previous_shot.save(update_fields=['shot_distance'])  # Update shot_distance field
 
         super().save(*args, **kwargs)
     
@@ -52,7 +56,7 @@ class Course(models.Model):
     # Other relevant course information
 
 
-    # Other relevant club information
+
 
 class Round(models.Model):
     id = models.AutoField(primary_key=True)

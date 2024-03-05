@@ -7,7 +7,7 @@ body {
 
 
 .bg-green {
-  background-color: #07f188;
+  background-color: #257551;
 }
 
 .site-header .navbar-nav .nav-link {
@@ -79,4 +79,9 @@ a.article-title:hover {
 
 .hide-input {
   display: none;  
+}
+
+.warning {
+  color: #ff0000;
+  font-weight: bolder;
 }

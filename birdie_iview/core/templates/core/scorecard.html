@@ -3,10 +3,10 @@
 {% load crispy_forms_tags %}
 {% block content %}
 {% csrf_token %}
-    <h1>Birdie-iView Home!</h1>
-    <h2>Scorecard</h2>
-    <p id="result"></p>
-    <form id="myForm" method="POST">
+
+    <h2>Scorecard Test</h2>
+    <p class="warning" id="result"></p>
+    <form id="shotForm" method="POST">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4"></legend>

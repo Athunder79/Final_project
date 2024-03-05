@@ -1,20 +1,16 @@
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, ListView
+from django.conf import settings
 from .forms import ShotForm
 from .models import Shot
 
+
+# Create your views here.
+
 def home(request):
-    if request.method == 'POST':
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
-        
-        # Save coordinates to the database
-        Shot.objects.create(latitude=latitude, longitude=longitude)
-        
-        return JsonResponse({'message': 'Coordinates saved successfully'}, status=200)
-    else:
-        return render(request, 'core/home.html')
+  return render(request, 'core/home.html')
 
 def scorecard(request):
     if request.method == 'POST':
