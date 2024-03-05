@@ -3,10 +3,10 @@
 {% load crispy_forms_tags %}
 {% block content %}
 {% csrf_token %}
-    <h1>Birdie-iView Home!</h1>
 
-    <button type="button" id="location">Location</button>
-    <form method="POST">
+    <h2>Scorecard Test</h2>
+    <p class="warning" id="result"></p>
+    <form id="shotForm" method="POST">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4"></legend>
@@ -16,7 +16,7 @@
             {{ form|crispy }}
         </fieldset>
         <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Submit</button>
+            <button id="location" class="btn btn-outline-info" type="button">Submit</button>
         </div>
     </form>
 {% endblock %}
