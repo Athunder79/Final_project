@@ -27,33 +27,45 @@ def scorecard(request):
         form = ShotForm()
         return render(request, 'core/scorecard.html', {'form': form})
 
+
 def find_golf_courses(request):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
-    location = (53.3498053, -6.2603097)  # Dublin coordinates
-    radius = 10000  # 10km radius
+    # Assuming coordinates of a location (you can get it from the user's input or any other source)
+    location = (53.3498053, -6.2603097)
+    radius = 10000  # Define a search radius in meters
 
     # Search for golf courses nearby
-    places = gmaps.places_nearby(location, radius=radius, type='golf_course')
+    places = gmaps.places_nearby(location, radius=radius, type='golf_course', keyword='golf course')
 
-    # Process the results and save to Course model
+    # Process the results
     golf_courses = []
     if 'results' in places:
         for place in places['results']:
-            if 'golf_course' in place.get('types', []):
-                course_info = {
-                    'name': place['name'],
-                    'address': place['vicinity'],
-                    'rating': place.get('rating', None),
-                    'latitude': place['geometry']['location']['lat'], 
-                    'longitude': place['geometry']['location']['lng'],
-                }
-                # Check for duplicates based on coordinates
-                if not Course.objects.filter(latitude=course_info['latitude'], longitude=course_info['longitude']).exists():
-                    golf_courses.append(course_info)
-                    # Create and save Course object
-                    Course.objects.create(**course_info)
-    return render(request, 'core/find_golf_courses.html', {'golf_courses': golf_courses})
+            name = place['name']
+            address = place['vicinity']
+            rating = place.get('rating')
+            latitude = place['geometry']['location']['lat']
+            longitude = place['geometry']['location']['lng']
 
+            # Append golf course data to the list
+            golf_courses.append({
+                'name': name,
+                'address': address,
+                'rating': rating,
+                'latitude': latitude,
+                'longitude': longitude
+            })
+
+            # Save the golf courses to the database
+            course, created = Course.objects.get_or_create(
+                name=name,
+                address=address,
+                rating=rating,
+                latitude=latitude,
+                longitude=longitude
+            )
+
+    return render(request, 'core/find_golf_courses.html', {'golf_courses': golf_courses})
 
 class CoreListView(ListView):
     template_name = 'core/home.html'
