@@ -11,6 +11,7 @@ class Shot(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Clubs, on_delete=models.CASCADE)
+    shot_num_per_hole = models.IntegerField(null=True, blank=True)  
     latitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=False)
     longitude = models.DecimalField(max_digits=9, decimal_places=7 , blank=True, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -49,11 +50,14 @@ class Shot(models.Model):
 
 
 class Course(models.Model):
-    id = models.AutoField(primary_key=True)
-    course_name = models.CharField(max_length=100)
-    location = models.CharField(max_length=100)
-    par = models.IntegerField()
-    # Other relevant course information
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    rating = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ['latitude', 'longitude'] 
 
 
 

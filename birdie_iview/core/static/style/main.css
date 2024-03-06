@@ -85,3 +85,13 @@ a.article-title:hover {
   color: #ff0000;
   font-weight: bolder;
 }
+
+#map {
+  height: 400px;  /* Adjust the height as needed */
+  width: 100%;     /* Adjust the width as needed */
+    /* Float the map view to the left */
+}
+#golf-courses {
+   /* Float the list of golf courses to the right */
+  width: 50%;     /* Adjust the width as needed */
+}
