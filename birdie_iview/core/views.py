@@ -27,7 +27,6 @@ def scorecard(request):
         form = ShotForm()
         return render(request, 'core/scorecard.html', {'form': form})
 
-
 def find_golf_courses(request):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
     # Assuming coordinates of a location (you can get it from the user's input or any other source)
@@ -72,7 +71,6 @@ class CoreListView(ListView):
 
     def get_queryset(self):
         return Shot.objects.filter(user=self.request.user)
-    
     
 class ShotCreateView(CreateView):
     model = Shot
