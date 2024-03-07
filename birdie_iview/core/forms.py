@@ -7,7 +7,7 @@ from .models import Shot
 class ShotForm(forms.ModelForm):
     class Meta:
         model = Shot
-        fields = ['latitude', 'longitude', 'club']
+        fields = ['latitude', 'longitude', 'club','course','hole_num','shot_num_per_hole']
 
     def __init__(self, *args, **kwargs):
         super(ShotForm, self).__init__(*args, **kwargs)
@@ -15,5 +15,8 @@ class ShotForm(forms.ModelForm):
         self.helper.layout = Layout(
             Field('latitude', id='latitude', css_class="hide-input"),
             Field('longitude', id="longitude", css_class="hide"),
-            Field('club', id="club")
+            Field('club', id="club"),
+            Field('course', id="course")
+            
+            
         )
