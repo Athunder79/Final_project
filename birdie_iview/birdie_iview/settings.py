@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-tvi#v*3^=b*v)9uaqn-txlfgzo33zz7l4+rv83i+x+pvxj1s*#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', os.environ.get('RENDER_HOSTNAME', '')]
 
 
 # Application definition
