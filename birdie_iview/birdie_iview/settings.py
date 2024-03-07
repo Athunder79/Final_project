@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 
 
@@ -133,4 +134,12 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 CRISPY_FAIL_SILENTLY = not DEBUG
 LOGIN_REDIRECT_URL = 'core-home'
 LOGIN_URL = 'login'
-GOOGLE_MAPS_API_KEY = 'AIzaSyBcfuxGeA5zR5uUOCfuhAatuGiAL-nQCWk'
+GOOGLE_MAPS_API_KEY = os.environ['GOOGLE_MAPS_API_KEY']
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER'] 
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
