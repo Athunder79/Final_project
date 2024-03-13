@@ -21,10 +21,8 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
-
-
-
 class Round(models.Model):
+
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -32,17 +30,29 @@ class Round(models.Model):
 
 
     def __str__(self):
-        self.id
+        self.round_date
 
+class Hole(models.Model):
+    id = models.AutoField(primary_key=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    hole_num = models.IntegerField(null=True, blank=True)
+    hole_par = models.IntegerField(null=True, blank=True)
+    hole_distance = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return f'{self.course} - Hole {self.hole_num}'
 
 class Shot(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Clubs, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    hole = models.ForeignKey(Hole, on_delete=models.CASCADE)
     hole_num = models.IntegerField(null=True, blank=True)
-    shot_num_per_hole = models.IntegerField(null=True, blank=True)  
+    hole_par = models.IntegerField(null=True, blank=True)
+    shot_num_per_hole = models.IntegerField(null=True, blank=True, default=1)  
     latitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=False)
     longitude = models.DecimalField(max_digits=9, decimal_places=7 , blank=True, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -50,6 +60,12 @@ class Shot(models.Model):
 
     def get_absolute_url(self):
         return reverse('scorecard-create')
+    
+    def ShotNumber(self):
+        if self.shot_num_per_hole:
+            return 1
+        # incresase the shot number by 1
+        self.shot_num_per_hole = F('shot_num_per_hole') + 1
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If this is a new entry, calculate shot distance
@@ -78,7 +94,6 @@ class Shot(models.Model):
 
         super().save(*args, **kwargs)
     
-
 
 
 

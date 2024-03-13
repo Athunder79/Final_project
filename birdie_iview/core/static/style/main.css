@@ -95,3 +95,38 @@ a.article-title:hover {
    /* Float the list of golf courses to the right */
   width: 50%;     /* Adjust the width as needed */
 }
+
+
+.tables {
+  border-radius: 0px 0px 8px 8px;
+  box-shadow: 0 4px 8px #050505;
+  font-size: 12px;
+  width: 100%;
+  text-align: center;
+  border: none;
+  background-color: #46a9a4cc;
+  padding-bottom: 4px;
+  padding-left: 1px;
+  padding-right: 1px;
+
+}
+
+.tableTotal {
+  border-radius: 0px 0px 8px 8px;
+  box-shadow: 0 4px 8px #050505;
+  font-size: 12px;
+  width: 60%;
+  text-align: center;
+  border: solid;
+  background-color: #46a9a4cc;
+  border: none;
+  padding-bottom: 5px;
+  padding-left: 1px;
+  padding-right: 1px;
+  margin-bottom: 60px;
+
+}
+
+.back9heading th {
+  font-size: 10px;
+}

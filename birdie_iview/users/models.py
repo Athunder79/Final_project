@@ -14,7 +14,7 @@ class Profile(models.Model):
 
 class Clubs(models.Model):
     id = models.AutoField(primary_key=True)
-    club_name = models.CharField(max_length=100)
+    club_name = models.CharField(max_length=100, blank=True, null=True)
     club_type = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
