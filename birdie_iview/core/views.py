@@ -1,4 +1,7 @@
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
+from typing import Any
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
@@ -7,7 +10,8 @@ from django.conf import settings
 from .forms import ShotForm, RoundForm, HoleForm
 from .models import Shot, Course, Round, Clubs, Hole
 import googlemaps
-from django.shortcuts import render
+import json
+
 
 
 # Create your views here.
@@ -17,32 +21,63 @@ def home(request):
 
   
         return render(request, 'core/home.html')
-    
+
+# course and round details
+@login_required
 def start_round(request):
     if request.method == 'POST':
         course_id = request.POST.get('course')
         course = get_object_or_404(Course, pk=course_id)
         
-        # Assign the current user to the user field of the Round object
+        # Assign the current user to the Round
         round = Round.objects.create(user=request.user, course=course)
         
-        # Redirect to the scorecard page with course and round IDs included in the URL
+        # Redirect to the hole details with course and round IDs included in the URL
         return redirect('hole-details', course_id=course.id, round_id=round.id)
     else:
         form = RoundForm()
         return render(request, 'core/start_round.html', {'form': form})
 
+# hole details
+@login_required
+def hole_details(request, course_id, round_id):
+    round_obj = get_object_or_404(Round, pk=round_id)
+    course_obj = get_object_or_404(Course, pk=course_id)
+
+    if request.method == 'POST':
+        form = HoleForm(request.POST)
+        if form.is_valid():
+            hole = form.save(commit=False)
+            hole.course = course_obj
+            hole.round = round_obj
+            hole.save()
+
+            # Redirect to the scorecard view passing the hole_id
+            return redirect('scorecard',  hole_id=hole.id)
+    else:
+        form = HoleForm()
+
+    return render(request, 'core/hole_details.html', {'form': form})
+
+# shot tracking and scorecard
 @login_required
 def scorecard(request, hole_id):
-    hole = get_object_or_404(Hole, pk=hole_id)
-    shot = Shot.objects.filter(hole=hole)
-    hole_num = hole.hole_num
+    current_hole = get_object_or_404(Hole, pk=hole_id)
+    holes = Hole.objects.filter(round=current_hole.round, round__user=request.user)
+    shots = Shot.objects.filter(hole__in=holes, user=request.user)
+    hole_num = current_hole.hole_num
 
     # Get the number of shots for the current hole
-    shot_count = Shot.objects.filter(hole=hole).count()+1
+    shot_count = shots.filter(hole=current_hole).count() 
+    current_shot = shot_count + 1
+    score = shot_count - current_hole.hole_par
 
-    score = shot_count - hole.hole_par
-    
+    # Get the number of shots for each hole
+    for hole in holes:
+        hole.shot_count = shots.filter(hole=hole).count()
+        hole.score = hole.shot_count - hole.hole_par
+
+    # Get data from the form
     if request.method == 'POST':
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
@@ -51,43 +86,51 @@ def scorecard(request, hole_id):
         if club_id is None:
             return JsonResponse({'error': 'Club ID is required'}, status=400)
         
-        # Get the Clubs instance based on the provided ID
+        # Get the Clubs instance 
         club = get_object_or_404(Clubs, pk=club_id)
-        # Save cshot info to the database
+
+        # Save shot info to the database
         Shot.objects.create(
             latitude=latitude,
             longitude=longitude,
-            hole=hole,
+            hole=current_hole,
             club=club,
             shot_num_per_hole=shot_count,
-            course=hole.course,
-            round=hole.round,
-            hole_num = hole.hole_num,
-            hole_par = hole.hole_par,
-            user=request.user  # Assign the user to the Shot object
+            course=current_hole.course,
+            round=current_hole.round,
+            hole_num=current_hole.hole_num,
+            hole_par=current_hole.hole_par,
+            user=request.user  
         )
-
-        print (hole.hole_distance)
-        
         return redirect('scorecard', hole_id=hole_id)
     else:
         form = ShotForm()
-        # Get data for each hole
-   
 
     return render(request, 'core/scorecard.html', {
         'form': form, 
         'hole_num': hole_num, 
-        'shot': shot, 
-        'hole': hole, 
+        'shots': shots, 
+        'holes': holes,
+        'current_hole': current_hole,
         'shot_count': shot_count,
         'score': score,
-       
-        })
+        'current_shot': current_shot,
+    })
+
+# return to hole_details with the course_id and round_id
+@login_required
+def next_hole(request, hole_id):
+    hole = get_object_or_404(Hole, pk=hole_id)
+    course_id = hole.course.id
+    round_id = hole.round.id
+
+    return redirect(reverse('hole-details', args=[course_id, round_id]))
 
 def find_golf_courses(request):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
-    # Assuming coordinates of a location (you can get it from the user's input or any other source)
+    key = settings.GOOGLE_MAPS_API_KEY
+
+   # get the user's location
     location = (53.3498053, -6.2603097)
     radius = 10000  # Define a search radius in meters
 
@@ -103,8 +146,7 @@ def find_golf_courses(request):
             rating = place.get('rating')
             latitude = place['geometry']['location']['lat']
             longitude = place['geometry']['location']['lng']
-
-            # Append golf course data to the list
+            
             golf_courses.append({
                 'name': name,
                 'address': address,
@@ -122,27 +164,117 @@ def find_golf_courses(request):
                 longitude=longitude
             )
 
-    return render(request, 'core/find_golf_courses.html', {'golf_courses': golf_courses})
+            context = {
+                'key': key,
+                'golf_courses': golf_courses
+            }
+
+    return render(request, 'core/find_golf_courses.html', context)
 
 @login_required
-def hole_details(request, course_id, round_id):
-    round_obj = get_object_or_404(Round, pk=round_id)
-    course_obj = get_object_or_404(Course, pk=course_id)
+def map(request):
+    key = settings.GOOGLE_MAPS_API_KEY
+    context = {
+        'key':key,
+    }
+    return render(request, 'core/map.html',context)
 
-    if request.method == 'POST':
-        form = HoleForm(request.POST)
+#plot shots on the map
+@login_required
+def mapshots(request):
+    # Get the shots details from the database
+    result_list = list(Shot.objects\
+                .exclude(latitude__isnull=True)\
+                .exclude(longitude__isnull=True)\
+
+                .values('id',
+                        'shot_num_per_hole', 
+                        'latitude',
+                        'longitude',
+                        'club',
+                        'created_at',
+                        'shot_distance',
+
+                        ))
+  
+    return JsonResponse (result_list, safe=False)
+
+# remove this view
+class ScorecardView(LoginRequiredMixin, ListView):
+    template_name = 'core/scorecard2.html'
+    context_object_name = 'data'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ShotForm()
+        context['holes'] = Hole.objects.all()
+        context['clubs'] = Clubs.objects.all()
+        context['courses'] = Course.objects.all()
+        context['rounds'] = Round.objects.all()
+        context['shots'] = Shot.objects.filter(user=self.request.user)
+        return context
+
+    def get_queryset(self):
+        return Shot.objects.filter(user=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        if 'submit_shot' in request.POST:
+            return self.submit_shot(request)
+        else:
+            # Handle other POST requests here
+            return super().get(request, *args, **kwargs)
+
+    def submit_shot(self, request):
+        form = ShotForm(request.POST)
         if form.is_valid():
-            hole = form.save(commit=False)
-            hole.course = course_obj
-            hole.round = round_obj
-            hole.save()
+            hole_id = form.cleaned_data['hole']
+            hole = get_object_or_404(Hole, pk=hole_id)
 
-            # Redirect to the scorecard view passing the course_id, round_id, and hole_id
-            return redirect('scorecard',  hole_id=hole.id)
-    else:
-        form = HoleForm()
+            # Get the number of shots for the current hole
+            shots = Shot.objects.filter(hole=hole)
+            shot_count = shots.count() 
+            current_shot = shot_count + 1
 
-    return render(request, 'core/hole_details.html', {'form': form})
+            # Calculate score
+            score = shot_count - hole.hole_par
+
+            latitude = form.cleaned_data['latitude']
+            longitude = form.cleaned_data['longitude']
+            club = form.cleaned_data['club']
+
+            if club is None:
+                return JsonResponse({'error': 'Club ID is required'}, status=400)
+
+            # Save shot info to the database
+            shot = form.save(commit=False)
+            shot.user = request.user
+            shot.course = hole.course
+            shot.round = hole.round
+            shot.hole = hole.hole_num
+            shot.shot_num_per_hole = shot_count
+            print(shot.user, shot.course, shot.round, shot.hole, shot.shot_num_per_hole, shot.club, shot.latitude, shot.longitude)
+            shot.save()
+
+            return redirect('scorecard2', hole_id=hole_id)
+        else:
+            # Handle invalid form
+            return render(request, self.template_name, {'form': form})
+
+# remove this view 
+class ScoreListView(LoginRequiredMixin,ListView):
+    context_object_name = 'data'
+    def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context['shot'] = Shot.objects.filter(user=self.request.user)
+            context['round'] = Round.objects.filter(user=self.request.user)
+            context['hole'] = Hole.objects.filter(round__user=self.request.user)
+            context['course'] = Course.objects.filter(round__user=self.request.user)
+        
+            return context        
+       
+    def get_queryset(self):
+        # Override the get_queryset method 
+        return Shot.objects.none()
 
 class CoreListView(ListView):
     template_name = 'core/home.html'
@@ -171,7 +303,7 @@ class RoundCreateView(CreateView):
 class HoleCreateView(CreateView):
     model = Hole
     fields = ['hole_num', 'hole_par', 'hole_distance']
-    template_name = 'core/hole_details.html'
+    template_name = 'core/scorecard.html'
 
     def form_valid(self, form):
         form.instance.user = self.request.user

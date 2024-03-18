@@ -18,12 +18,12 @@
             </li>
             {% endfor %}
         </ul>
-        <p>{{ settings.GOOGLE_MAPS_API_KEY }}</p>
+        <p>setting{{ settings.GOOGLE_MAPS_API_KEY }}</p>
     </div>
 
     <!-- Load Google Maps JavaScript API -->
     <script async
-    src="https://maps.googleapis.com/maps/api/js?key={{setting.GOOGLE_MAPS_API_KEY}}&loading=async&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key={{key}}&loading=async&callback=initMap">
 </script>
 
     <script>
