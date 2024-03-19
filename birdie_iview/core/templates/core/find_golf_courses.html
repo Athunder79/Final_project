@@ -1,4 +1,3 @@
-
 {% extends "core/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
@@ -13,8 +12,7 @@
                 <strong>{{ course.name }}</strong><br>
                 Address: {{ course.address }}<br>
                 Rating: {% if course.rating %}{{ course.rating }}{% else %}N/A{% endif %}<br>
-                Latitude: {{ course.latitude }}<br>
-                Longitude: {{ course.longitude }}
+                Distance: {{ course.distance }}
             </li>
             {% endfor %}
         </ul>
@@ -28,29 +26,47 @@
 
     <script>
         function initMap() {
-            var map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 53.3498053, lng: -6.2603097},  // Dublin coordinates
-                zoom: 12  // Adjust the zoom level as needed
-            });
+            // get user's  current location from the view
+                    var pos = {
+                        lat: {{ user_lat }},
+                        lng: {{ user_lng }}
+                    };
+                 
+                    // Create a map centered on the user's location
+                    var infowindow = new google.maps.InfoWindow();
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                        center: pos,
+                        zoom: 12
+                    });
 
-            // Add markers for golf courses
-            var golfCourses = [
-                {% for course in golf_courses %}
-                {
-                    name: "{{ course.name }}",
-                    location: {lat: {{ course.latitude }}, lng: {{ course.longitude }}}
-                },
-                {% endfor %}
-            ];
+                    // Add a marker for the user's location
+                    var marker = new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                        title: 'You are here'
+                    });
 
-            golfCourses.forEach(function(course) {
-                var marker = new google.maps.Marker({
-                    position: course.location,
-                    map: map,
-                    title: course.name
-                });
-            });
-        }
-    </script>
+                    // Add markers for golf courses
+                    var golfCourses = [
+                        {% for course in golf_courses %}
+                        {
+                            name: "{{ course.name }}",
+                            location: {lat: {{ course.latitude }}, lng: {{ course.longitude }}}
+                        },
+                        {% endfor %}
+                    ];
+
+                    golfCourses.forEach(function(course) {
+                        var marker = new google.maps.Marker({
+                            position: course.location,
+                            map: map,
+                            title: course.name
+                            
+                        });
+                    });
+
+                }
+
+        </script>
 
 {% endblock %}

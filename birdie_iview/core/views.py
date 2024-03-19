@@ -1,8 +1,7 @@
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from typing import Any
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, ListView
@@ -44,6 +43,10 @@ def hole_details(request, course_id, round_id):
     round_obj = get_object_or_404(Round, pk=round_id)
     course_obj = get_object_or_404(Course, pk=course_id)
 
+    # check if user is the owner of the round
+    if round_obj.user != request.user:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
     if request.method == 'POST':
         form = HoleForm(request.POST)
         if form.is_valid():
@@ -63,6 +66,19 @@ def hole_details(request, course_id, round_id):
 @login_required
 def scorecard(request, hole_id):
     current_hole = get_object_or_404(Hole, pk=hole_id)
+    round_obj = current_hole.round
+    round_id = round_obj.id
+
+    print(round_id)
+    
+
+    # Google Maps API key
+    key = settings.GOOGLE_MAPS_API_KEY
+
+    # check if user is the owner of the round
+    if round_obj.user != request.user:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
     holes = Hole.objects.filter(round=current_hole.round, round__user=request.user)
     shots = Shot.objects.filter(hole__in=holes, user=request.user)
     hole_num = current_hole.hole_num
@@ -115,6 +131,8 @@ def scorecard(request, hole_id):
         'shot_count': shot_count,
         'score': score,
         'current_shot': current_shot,
+        'key': key,
+        'round_id': round_id
     })
 
 # return to hole_details with the course_id and round_id
@@ -130,12 +148,22 @@ def find_golf_courses(request):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
     key = settings.GOOGLE_MAPS_API_KEY
 
-   # get the user's location
-    location = (53.3498053, -6.2603097)
+   # get the user's current location
+    location = gmaps.geolocate()
+    user_location = (location['location']['lat'], location['location']['lng'])
+    user_lat = location['location']['lat']
+    user_lng = location['location']['lng']
     radius = 10000  # Define a search radius in meters
 
+    print(user_lat, user_lng)
+
     # Search for golf courses nearby
-    places = gmaps.places_nearby(location, radius=radius, type='golf_course', keyword='golf course')
+    places = gmaps.places_nearby(user_location, radius=radius, type='golf_course', keyword='golf course')
+    
+    # get distance from user's location to the golf course
+    for place in places['results']:
+        place['distance'] = gmaps.distance_matrix(user_location, place['geometry']['location'])['rows'][0]['elements'][0]['distance']['text']
+
 
     # Process the results
     golf_courses = []
@@ -146,13 +174,15 @@ def find_golf_courses(request):
             rating = place.get('rating')
             latitude = place['geometry']['location']['lat']
             longitude = place['geometry']['location']['lng']
+            distance = place['distance']
             
             golf_courses.append({
                 'name': name,
                 'address': address,
                 'rating': rating,
                 'latitude': latitude,
-                'longitude': longitude
+                'longitude': longitude,
+                'distance': distance
             })
 
             # Save the golf courses to the database
@@ -164,9 +194,15 @@ def find_golf_courses(request):
                 longitude=longitude
             )
 
+            # Sort the golf courses by distance in ascending order
+            golf_courses.sort(key=lambda x: x['distance'])
+
             context = {
                 'key': key,
-                'golf_courses': golf_courses
+                'golf_courses': golf_courses,
+                'user_lat': user_lat,
+                'user_lng': user_lng,
+                'user_location': user_location,
             }
 
     return render(request, 'core/find_golf_courses.html', context)
@@ -186,7 +222,6 @@ def mapshots(request):
     result_list = list(Shot.objects\
                 .exclude(latitude__isnull=True)\
                 .exclude(longitude__isnull=True)\
-
                 .values('id',
                         'shot_num_per_hole', 
                         'latitude',
@@ -194,6 +229,7 @@ def mapshots(request):
                         'club',
                         'created_at',
                         'shot_distance',
+                        'round_id'
 
                         ))
   

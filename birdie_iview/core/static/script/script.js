@@ -1,11 +1,11 @@
 addEventListener('DOMContentLoaded', function () {
 
   let location = document.getElementById("location");
+  let map = document.getElementById("toggle-map");
 
   // check if the element exists before adding the event listener
-  if (location != null){
-    location.addEventListener("click", getLocation);
-  }
+  if (location != null){location.addEventListener("click", getLocation);}
+  if (map != null){map.addEventListener("click", showMap);}
 })
 
 
@@ -20,7 +20,7 @@ function getLocation()
   }
 
 // add the latitude and longitude to the form and post
-  function showPosition(position)
+function showPosition(position)
   {
   lat=position.coords.latitude;
   lon=position.coords.longitude;
@@ -29,7 +29,7 @@ function getLocation()
   document.getElementById('shotForm').submit()
   }
 
-  function showError(error)
+function showError(error)
   {
   switch(error.code)
     {
@@ -44,3 +44,14 @@ function getLocation()
       break;
     }
   }
+
+// show or hide the map
+function showMap(){
+  document.getElementById("map-container").classList.toggle("hide")
+  if (document.getElementById("show-map").innerHTML == "Hide Map"){
+    document.getElementById("show-map").innerHTML = "Show Map"
+  } else {
+    document.getElementById("show-map").innerHTML = "Hide Map"
+  }
+
+}
