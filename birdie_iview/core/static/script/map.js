@@ -33,7 +33,7 @@ function initMap(data, userLocation, roundId) {
     const map = new google.maps.Map(document.getElementById('map'), {
         zoom: 18,
         mapTypeId: 'satellite',
-        center: userLocation // Center the map at the user's location
+        center: userLocation // Center of the map
     });
 
     // Marker for the user's current location

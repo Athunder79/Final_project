@@ -13,7 +13,6 @@ urlpatterns = [
     path('start-round/', start_round, name='start-round'),
     path('hole-details/<int:course_id>/<int:round_id>/', hole_details, name='hole-details'),
     path('hole-details/<int:course_id>/<int:round_id>/', next_hole, name='next-hole'),
-    path('map',view.map, name='map'),
     path('map-shots',view.mapshots, name='map-shots'),
 
     
