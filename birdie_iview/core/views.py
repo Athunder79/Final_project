@@ -111,7 +111,7 @@ def scorecard(request, hole_id):
             return JsonResponse({'error': 'Club ID is required'}, status=400)
         
         # Get the Clubs instance 
-        club = get_object_or_404(Clubs, pk=club_id)
+        club = get_object_or_404(Clubs, pk=club_id, user=request.user)
 
         # Save shot info to the database
         Shot.objects.create(
@@ -128,7 +128,7 @@ def scorecard(request, hole_id):
         )
         return redirect('scorecard', hole_id=hole_id)
     else:
-        form = ShotForm()
+        form = ShotForm(user=request.user)
 
     return render(request, 'core/scorecard.html', {
         'form': form, 

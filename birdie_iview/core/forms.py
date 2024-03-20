@@ -1,16 +1,17 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Div
 from django import forms
-from .models import Shot, Round, Course, Hole
+from .models import Shot, Round, Course, Hole ,Clubs
 
 
 class ShotForm(forms.ModelForm):
     class Meta:
         model = Shot
         fields = ['latitude', 'longitude', 'club']
-
-    def __init__(self, *args, **kwargs):
+    
+    def __init__(self, user, *args, **kwargs):
         super(ShotForm, self).__init__(*args, **kwargs)
+        self.fields['club'].queryset = Clubs.objects.filter(user=user)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field('latitude', id='latitude', css_class='hide-input'),
