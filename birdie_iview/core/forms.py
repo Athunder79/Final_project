@@ -50,3 +50,5 @@ class HoleForm(forms.ModelForm):
             Field('hole_par', id='hole_par'),
             Field('hole_distance', id='hole_distance'),
         )
+
+HoleForm.base_fields['hole_num'].widget = HideInput()

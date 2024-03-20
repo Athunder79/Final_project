@@ -4,11 +4,20 @@
 {% csrf_token %}
 
     <h2>Hole Details</h2>
+
+    {% if user.is_authenticated %}
+     {% if next_hole_num >= 19 %}
+        <h1>Round Complete!</h1>
+        <!-- <a href="{# url 'round-summary' round_id=round_id #}">Round Summary</a> -->
+    {% else %}
+    <p>Next Hole Number: {{ next_hole_num }}</p>
     <form id="roundForm" method="POST">
         {% csrf_token %}
 
         {{ form|crispy}}
-    <button type="submit" class="btn btn-primary">Start Round</button>
+    <button type="submit" class="btn btn-primary">Start Hole</button>
     </form>
+    {% endif %}
+    {% endif %}
 
 {% endblock %}

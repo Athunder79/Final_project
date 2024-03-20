@@ -47,6 +47,13 @@ def hole_details(request, course_id, round_id):
     if round_obj.user != request.user:
         return HttpResponseForbidden("You don't have permission to access this page.")
 
+    next_hole_num = 1  # Initialize next_hole_num variable
+
+    # Get the latest hole number for the current round
+    latest_hole = Hole.objects.filter(round=round_obj).order_by('-hole_num').first()
+    if latest_hole:
+        next_hole_num = latest_hole.hole_num + 1  # Increment the latest hole number by 1
+
     if request.method == 'POST':
         form = HoleForm(request.POST)
         if form.is_valid():
@@ -56,11 +63,12 @@ def hole_details(request, course_id, round_id):
             hole.save()
 
             # Redirect to the scorecard view passing the hole_id
-            return redirect('scorecard',  hole_id=hole.id)
+            return redirect('scorecard', hole_id=hole.id)
     else:
-        form = HoleForm()
+        initial_data = {'hole_num': next_hole_num}  # Pre-populate the hole number
+        form = HoleForm(initial=initial_data)
 
-    return render(request, 'core/hole_details.html', {'form': form})
+    return render(request, 'core/hole_details.html', {'next_hole_num': next_hole_num,'form': form})
 
 # shot tracking and scorecard
 @login_required
