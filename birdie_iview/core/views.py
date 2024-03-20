@@ -97,9 +97,22 @@ def scorecard(request, hole_id):
     score = shot_count - current_hole.hole_par
 
     # Get the number of shots for each hole
+    total_par = 0
+    total_shots = 0
+    running_scores = []
+
+    print(running_scores)
+
+
     for hole in holes:
         hole.shot_count = shots.filter(hole=hole).count()
-        hole.score = hole.shot_count - hole.hole_par
+        total_par += hole.hole_par
+        print(total_par)
+        total_shots += hole.shot_count
+        print(total_shots)
+        running_scores.append(total_shots - total_par)
+        print(running_scores)
+   
 
     # Get data from the form
     if request.method == 'POST':
@@ -125,8 +138,9 @@ def scorecard(request, hole_id):
             hole_num=current_hole.hole_num,
             hole_par=current_hole.hole_par,
             user=request.user  
+
         )
-        return redirect('scorecard', hole_id=hole_id)
+        return redirect('scorecard', hole_id=hole_id,)
     else:
         form = ShotForm(user=request.user)
 
@@ -140,7 +154,8 @@ def scorecard(request, hole_id):
         'score': score,
         'current_shot': current_shot,
         'key': key,
-        'round_id': round_id
+        'round_id': round_id,
+        'running_scores': running_scores
     })
 
 # return to hole_details with the course_id and round_id

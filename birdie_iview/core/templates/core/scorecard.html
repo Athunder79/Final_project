@@ -101,10 +101,9 @@
             </tr>
             <tr>
                 <td>Score</td>
-                {% for hole in holes|slice:":9" %}
-                <td class="hide" id="ou0">{{ hole.score }}</td>
+                {% for running_score in running_scores|slice:":9" %}
+                <td>{{ running_score }}</td>
                 {% endfor %}
-
                 <td id="totalFrontOU"></td>
             </tr>
         </tbody>
@@ -151,8 +150,8 @@
             </tr>
             <tr>
                 <td>Score</td>
-                {% for hole in holes|slice:"9:" %}
-                <td id="ou0{{ hole.hole_num }}">{{ hole.score }}</td>
+                {% for running_score in running_scores|slice:"9:" %}
+                <td>{{ running_score }}</td>
                 {% endfor %}
                 <td id="totalBkOu">f</td>
             </tr>
