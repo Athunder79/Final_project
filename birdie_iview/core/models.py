@@ -86,7 +86,7 @@ class Shot(models.Model):
                 c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
                 # Radius of the Earth in kilometers * c *1000 to get metres
-                distance = 6371 * c 
+                distance = 6371 * c * 1000
 
                 # Update previous shot's distance
                 previous_shot.shot_distance = distance

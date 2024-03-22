@@ -167,6 +167,7 @@ def next_hole(request, hole_id):
 
     return redirect(reverse('hole-details', args=[course_id, round_id]))
 
+
 def find_golf_courses(request):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
     key = settings.GOOGLE_MAPS_API_KEY
