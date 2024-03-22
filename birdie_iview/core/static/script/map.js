@@ -18,9 +18,10 @@ function getUserLocation(data, roundId) {
             };
             initMap(data, userLocation, roundId);
         },
-        function () {
-            handleLocationError(true);
-        });
+
+            function () {
+                handleLocationError(true);
+            });
     } else {
         // Browser doesn't support Geolocation
         handleLocationError(false);
@@ -47,35 +48,58 @@ function initMap(data, userLocation, roundId) {
             return shot.round_id === roundId;
         });
 
-        // Markers for shots on the golf course
+        // Separate shot positions by holes
+        const holeShots = {};
         currentRoundShots.forEach(shot => {
-            const marker = new google.maps.Marker({
-                position: { lat: parseFloat(shot.latitude), lng: parseFloat(shot.longitude) },
-                map: map,
-                title: 'Shot ' + shot.shot_num_per_hole + ' Hole ' + shot.hole_num + ' Distance ' + shot.shot_distance + ' Metres',
-            });
-
-
-            // Info window for each marker
-            const infowindow = new google.maps.InfoWindow({
-                content: `
-                    <div>
-                        <h3>Hole ${shot.hole_num}</h3>
-                        <p><strong>Shot:</strong> ${shot.shot_num_per_hole}</p>
-                        <p><strong>Club:</strong> ${shot.club__club_name}</p>
-                        <p><strong>Distance:</strong> ${shot.shot_distance} Metres</p>
-                    </div>
-                `
-            });
-
-            // Open info window when marker is clicked
-            marker.addListener('click', function () {
-                infowindow.open(map, marker);
-            });
+            if (!holeShots[shot.hole_num]) {
+                holeShots[shot.hole_num] = [];
+            }
+            holeShots[shot.hole_num].push({ lat: parseFloat(shot.latitude), lng: parseFloat(shot.longitude), details: shot });
         });
-        console.log(currentRoundShots);
+
+        // Create polylines for each hole
+        for (const holeNum in holeShots) {
+            const shotPositions = holeShots[holeNum].map(shot => shot);
+
+            const shotPath = new google.maps.Polyline({
+                path: shotPositions,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+
+            shotPath.setMap(map);
+
+            // Add markers and info windows for each shot
+            shotPositions.forEach((shot, index) => {
+                const marker = new google.maps.Marker({
+                    position: shot,
+                    map: map,
+                    title: `Shot ${index + 1} - Hole ${holeNum}`,
+                });
+
+                const infowindow = new google.maps.InfoWindow({
+                    content: `
+                        <div>
+                            <h3>Hole ${holeNum}</h3>
+                            <p><strong>Shot:</strong> ${index + 1}</p>
+                            <p><strong>Club:</strong> ${shot.details.club__club_name}</p>
+                            <p><strong>Distance:</strong> ${shot.details.shot_distance} Metres</p>
+                        </div>
+                    `
+                });
+
+                marker.addListener('click', function () {
+                    infowindow.open(map, marker);
+                });
+            });
+        }
     }
 }
+
+
+
 
 function handleLocationError(browserHasGeolocation) {
     let errorMessage = '';
@@ -86,3 +110,6 @@ function handleLocationError(browserHasGeolocation) {
     }
     console.error(errorMessage);
 }
+
+
+
