@@ -247,13 +247,15 @@ def mapshots(request):
                 .exclude(latitude__isnull=True)\
                 .exclude(longitude__isnull=True)\
                 .values('id',
-                        'shot_num_per_hole', 
+                        'shot_num_per_hole',
+                        'hole_num', 
                         'latitude',
                         'longitude',
-                        'club',
+                        'club__club_name',
                         'created_at',
                         'shot_distance',
                         'round_id'
+                    
 
                         ))
   
