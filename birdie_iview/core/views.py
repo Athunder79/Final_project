@@ -255,7 +255,6 @@ def mapshots(request):
                         'created_at',
                         'shot_distance',
                         'round_id'
-                    
 
                         ))
   
