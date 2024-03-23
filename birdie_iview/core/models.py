@@ -55,6 +55,8 @@ class Shot(models.Model):
     shot_num_per_hole = models.IntegerField(null=True, blank=True, default=1)  
     latitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=False)
     longitude = models.DecimalField(max_digits=9, decimal_places=7 , blank=True, null=False)
+    end_latitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=True)
+    end_longitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     shot_distance = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
 

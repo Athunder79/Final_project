@@ -13,13 +13,12 @@
 <h2>Hole Distance: {{ hole_distance }}</h2> -->
 
 <p class="warning" id="result"></p>
+
+<!-- shot form -->
 <form id="shotForm" method="POST">
     {% csrf_token %}
     <fieldset class="form-group">
         <legend class="border-bottom mb-4"></legend>
-        <!-- <input type="text" id="latitude" placeholder="Latitude">
-            <input type="text" id="longitude" placeholder="Longitude"> -->
-
         {{ form|crispy }}
     </fieldset>
     <div class="d-grid gap-2 col-6 mx-auto">
@@ -53,6 +52,7 @@
     </div>
 </div>
 
+<!-- scorecard table -->
 <div class="scorecard">
     <table class="tables">
 
