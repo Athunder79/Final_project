@@ -160,12 +160,20 @@ def scorecard(request, hole_id):
 
 # return to hole_details with the course_id and round_id
 @login_required
-def next_hole(request, hole_id):
+def next_hole(request, hole_id, course_id, round_id):
     hole = get_object_or_404(Hole, pk=hole_id)
-    course_id = hole.course.id
-    round_id = hole.round.id
 
-    return redirect(reverse('hole-details', args=[course_id, round_id]))
+
+    # add end latitude and longitude to the previous shot of the hole
+    if request.method == 'POST':
+        end_latitude = request.POST.get('end_latitude')
+        end_longitude = request.POST.get('end_longitude')
+        shot = Shot.objects.filter(hole=hole).order_by('-created_at').first()
+        shot.end_latitude = end_latitude
+        shot.end_longitude = end_longitude
+        shot.save()
+
+    return redirect(hole_details, course_id=course_id, round_id=round_id)
 
 
 def find_golf_courses(request):

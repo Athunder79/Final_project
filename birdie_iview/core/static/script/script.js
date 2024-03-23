@@ -2,14 +2,17 @@ addEventListener('DOMContentLoaded', function () {
 
   let location = document.getElementById("location");
   let map = document.getElementById("toggle-map");
+  let nextHole = document.getElementById("next-hole");
 
   // check if the element exists before adding the event listener
   if (location != null){location.addEventListener("click", getLocation);}
   if (map != null){map.addEventListener("click", showMap);}
+  if (nextHole != null){nextHole.addEventListener("click", updateShotEndPosition);}
 })
 
 
-// Get the latitude and longitude from browser
+
+// Get the latitude and longitude from browser for shot form
 function getLocation()
   {
   if (navigator.geolocation)
@@ -19,6 +22,27 @@ function getLocation()
   else{result.innerHTML="Geolocation is not supported by this browser.";}
   }
 
+
+function updateShotEndPosition(){
+  if (navigator.geolocation)
+    {
+    navigator.geolocation.getCurrentPosition(showEndPosition,showError);
+    }
+  else{result.innerHTML="Geolocation is not supported by this browser.";}
+}
+
+
+function showEndPosition(position){
+  lat=position.coords.latitude;
+  lon=position.coords.longitude;
+  document.getElementById("end_latitude").value= lat;
+  document.getElementById("end_longitude").value= lon;
+  document.getElementById("endHole").submit()
+}
+
+
+
+
 // add the latitude and longitude to the form and post
 function showPosition(position)
   {
@@ -26,7 +50,7 @@ function showPosition(position)
   lon=position.coords.longitude;
   document.getElementById("id_latitude").value= lat;
   document.getElementById("id_longitude").value= lon;
-  document.getElementById('shotForm').submit()
+  document.getElementById("shotForm").submit()
   }
 
 function showError(error)
