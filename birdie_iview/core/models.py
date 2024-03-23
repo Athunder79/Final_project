@@ -36,8 +36,8 @@ class Hole(models.Model):
     id = models.AutoField(primary_key=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     round = models.ForeignKey(Round, on_delete=models.CASCADE)
-    hole_num = models.IntegerField(null=True, blank=True)
-    hole_par = models.IntegerField(null=True, blank=True)
+    hole_num = models.IntegerField(null=False, blank=False)
+    hole_par = models.IntegerField(null=False, blank=False)
     hole_distance = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
@@ -70,32 +70,43 @@ class Shot(models.Model):
         self.shot_num_per_hole = F('shot_num_per_hole') + 1
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # If this is a new entry, calculate shot distance
-            previous_shot = Shot.objects.filter(user=self.user).order_by('-created_at').first()
-            if previous_shot:
-                # Calculate distance between previous shot and current shot
-                previous_lat = radians(float(previous_shot.latitude))
-                previous_lon = radians(float(previous_shot.longitude))
-                current_lat = radians(float(self.latitude))
-                current_lon = radians(float(self.longitude))
+        if not self.pk:  # If this is a new entry, update previous shot's end coordinates
+            self._update_previous_shot_end_coordinates()
 
-                # Difference in coordinates
-                dlon = current_lon - previous_lon
-                dlat = current_lat - previous_lat
-
-                # Haversine formula
-                a = sin(dlat / 2)**2 + cos(previous_lat) * cos(current_lat) * sin(dlon / 2)**2
-                c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-                # Radius of the Earth in kilometers * c *1000 to get metres
-                distance = 6371 * c 
-
-                # Update previous shot's distance
-                previous_shot.shot_distance = distance
-                previous_shot.save(update_fields=['shot_distance'])  # Update shot_distance field
+            # Calculate distance between start coordinates and end coordinates of the previous shot
+            self._calculate_distance()
 
         super().save(*args, **kwargs)
-    
 
+    def _update_previous_shot_end_coordinates(self):
+        previous_shot = Shot.objects.filter(user=self.user).order_by('-created_at').first()
 
+        if previous_shot and previous_shot.shot_num_per_hole >= 1: # If there is a previous shot and meets the condition
+            previous_shot.end_latitude = self.latitude
+            previous_shot.end_longitude = self.longitude
+            previous_shot.save(update_fields=['end_latitude', 'end_longitude'])
 
+    def _calculate_distance(self):
+        previous_shot = Shot.objects.filter(user=self.user).order_by('-created_at').first()
+
+        if previous_shot and previous_shot.latitude is not None and previous_shot.longitude is not None \
+                and previous_shot.end_latitude is not None and previous_shot.end_longitude is not None:
+            start_lat = radians(float(previous_shot.latitude))
+            start_lon = radians(float(previous_shot.longitude))
+            end_lat = radians(float(previous_shot.end_latitude))
+            end_lon = radians(float(previous_shot.end_longitude))
+
+            # Difference in coordinates
+            dlon = end_lon - start_lon
+            dlat = end_lat - start_lat
+
+            # Haversine formula
+            a = sin(dlat / 2)**2 + cos(start_lat) * cos(end_lat) * sin(dlon / 2)**2
+            c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+            # Radius of the Earth in kilometers * c *1000 to get meters
+            distance = 6371 * c 
+
+            # Update previous shot's distance
+            previous_shot.shot_distance = distance
+            previous_shot.save(update_fields=['shot_distance'])
