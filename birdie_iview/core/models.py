@@ -70,18 +70,27 @@ class Shot(models.Model):
         self.shot_num_per_hole = F('shot_num_per_hole') + 1
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # If this is a new entry, update previous shot's end coordinates
-            self._update_previous_shot_end_coordinates()
+        print("Self.pk:",self.pk)
+        print("Self.shot_num_per_hole:",self.shot_num_per_hole)
+        if not self.pk: 
+            if self.shot_num_per_hole > 0:  # If not the first shot of the hole
 
-            # Calculate distance between start coordinates and end coordinates of the previous shot
-            self._calculate_distance()
+            # update the end coordinates of the previous shot and calculate the distance
+                self._update_previous_shot_end_coordinates()
+                self._calculate_distance()
+            else:
+                # Only calculate distance between start coordinates and end coordinates of the previous shot
+                self._calculate_distance()
 
         super().save(*args, **kwargs)
 
     def _update_previous_shot_end_coordinates(self):
         previous_shot = Shot.objects.filter(user=self.user).order_by('-created_at').first()
 
-        if previous_shot and previous_shot.shot_num_per_hole >= 1: # If there is a previous shot and meets the condition
+        print("previou shot:",previous_shot)
+        print("previous shot Number Per Hole:", previous_shot.shot_num_per_hole)
+
+        if previous_shot and previous_shot.shot_num_per_hole >= 0: # If there is a previous shot and meets the condition
             previous_shot.end_latitude = self.latitude
             previous_shot.end_longitude = self.longitude
             previous_shot.save(update_fields=['end_latitude', 'end_longitude'])

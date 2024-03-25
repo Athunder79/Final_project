@@ -1,22 +1,30 @@
-
 {% extends "core/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
 {% csrf_token %}
-    <h1>Birdie-iView Home!</h1>
-
-    <button type="button" id="location">Location</button>
-    <form method="POST">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4"></legend>
-            <!-- <input type="text" id="latitude" placeholder="Latitude">
-            <input type="text" id="longitude" placeholder="Longitude"> -->
-
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Submit</button>
+<main role="main" class="container">
+    <div class="row">
+      <div class="col-md-8 mt-5">
+        <h2 class="mb-4">Welcome to Birdie-iView</h2>
+        <p class="lead">Manage your golfing experience with ease. Birdie-iView offers various tools to enhance your golfing experience. Choose an option below to get started:</p>
+        {% if user.is_authenticated %}
+        <div class="list-group-item disabled">
+          <span class="text-muted me-2">Welcome,</span>
+          <span>{{ user.username }}</span>
         </div>
-    </form>
+        {% endif %}
+        <div class="list-group">
+          <a href="{% url 'find-golf-courses' %}" class="list-group-item list-group-item-action">Find a Course</a>
+          <a href="{% url 'start-round' %}" class="list-group-item list-group-item-action">Start Round</a>
+          <a href="{% url 'clubs' %}" class="list-group-item list-group-item-action">Add Clubs</a>
+          <a href="{% url 'profile' %}" class="list-group-item list-group-item-action">Profile</a>
+          <!-- if user is not logged in  -->
+          {% if not user.is_authenticated %}
+          <a href="{% url 'login' %}" class="list-group-item list-group-item-action">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+</main>
+
 {% endblock %}

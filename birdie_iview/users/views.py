@@ -37,6 +37,7 @@ def profile(request):
 
     return render(request, 'users/profile.html', context)
 
+@login_required
 def clubs(request):
 
     user_clubs = Clubs.objects.filter(user=request.user)

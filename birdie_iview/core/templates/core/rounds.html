@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% csrf_token %}
+
+{% if user.is_authenticated %}
+
+<h1>Rounds You've Played Details</h1>
+
+{% for round_item in round %}
+<div class="content-section">
+    <div id="round" class="table-responsive">
+        <h3>Round Date:{{ round_item.round_date }}  Course: {{ round_item.course }}</h3>
+        <table id="round-body" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Round</th>
+                    <th scope="col">Shot Per Hole</th>
+                    <th scope="col">Hole Number</th>
+                    <th scope="col">Club</th>
+                    <th scope="col">Par</th>
+                    <th scope="col">Shot Distance</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for shot in round_item.shot_set.all %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ shot.round_id }}</td>
+                    <td>{{ shot.shot_num_per_hole }}</td>
+                    <td>{{ shot.hole_num }}</td>
+                    <td>{{ shot.club }}</td>
+                    <td>{{ shot.hole_par }}</td>
+                    <td>{{ shot.shot_distance }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+{% endif %}
+{% endblock %}

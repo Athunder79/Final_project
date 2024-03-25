@@ -76,10 +76,7 @@ def scorecard(request, hole_id):
     current_hole = get_object_or_404(Hole, pk=hole_id)
     round_obj = current_hole.round
     round_id = round_obj.id
-
-    print(round_id)
     
-
     # Google Maps API key
     key = settings.GOOGLE_MAPS_API_KEY
 
@@ -101,18 +98,14 @@ def scorecard(request, hole_id):
     total_shots = 0
     running_scores = []
 
-    print(running_scores)
+
 
 
     for hole in holes:
         hole.shot_count = shots.filter(hole=hole).count()
         total_par += hole.hole_par
-        print(total_par)
         total_shots += hole.shot_count
-        print(total_shots)
         running_scores.append(total_shots - total_par)
-        print(running_scores)
-   
 
     # Get data from the form
     if request.method == 'POST':
@@ -187,7 +180,6 @@ def find_golf_courses(request):
     user_lng = location['location']['lng']
     radius = 10000  # Define a search radius in meters
 
-    print(user_lat, user_lng)
 
     # Search for golf courses nearby
     places = gmaps.places_nearby(user_location, radius=radius, type='golf_course', keyword='golf course')
@@ -262,75 +254,18 @@ def mapshots(request):
                         'club__club_name',
                         'created_at',
                         'shot_distance',
-                        'round_id'
+                        'round_id',
+                        'end_latitude',
+                        'end_longitude'
 
                         ))
   
     return JsonResponse (result_list, safe=False)
 
-# remove this view
-class ScorecardView(LoginRequiredMixin, ListView):
-    template_name = 'core/scorecard2.html'
-    context_object_name = 'data'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = ShotForm()
-        context['holes'] = Hole.objects.all()
-        context['clubs'] = Clubs.objects.all()
-        context['courses'] = Course.objects.all()
-        context['rounds'] = Round.objects.all()
-        context['shots'] = Shot.objects.filter(user=self.request.user)
-        return context
 
-    def get_queryset(self):
-        return Shot.objects.filter(user=self.request.user)
-
-    def post(self, request, *args, **kwargs):
-        if 'submit_shot' in request.POST:
-            return self.submit_shot(request)
-        else:
-            # Handle other POST requests here
-            return super().get(request, *args, **kwargs)
-
-    def submit_shot(self, request):
-        form = ShotForm(request.POST)
-        if form.is_valid():
-            hole_id = form.cleaned_data['hole']
-            hole = get_object_or_404(Hole, pk=hole_id)
-
-            # Get the number of shots for the current hole
-            shots = Shot.objects.filter(hole=hole)
-            shot_count = shots.count() 
-            current_shot = shot_count + 1
-
-            # Calculate score
-            score = shot_count - hole.hole_par
-
-            latitude = form.cleaned_data['latitude']
-            longitude = form.cleaned_data['longitude']
-            club = form.cleaned_data['club']
-
-            if club is None:
-                return JsonResponse({'error': 'Club ID is required'}, status=400)
-
-            # Save shot info to the database
-            shot = form.save(commit=False)
-            shot.user = request.user
-            shot.course = hole.course
-            shot.round = hole.round
-            shot.hole = hole.hole_num
-            shot.shot_num_per_hole = shot_count
-            print(shot.user, shot.course, shot.round, shot.hole, shot.shot_num_per_hole, shot.club, shot.latitude, shot.longitude)
-            shot.save()
-
-            return redirect('scorecard2', hole_id=hole_id)
-        else:
-            # Handle invalid form
-            return render(request, self.template_name, {'form': form})
-
-# remove this view 
 class ScoreListView(LoginRequiredMixin,ListView):
+    template_name = 'core/rounds.html'
     context_object_name = 'data'
     def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
@@ -351,7 +286,7 @@ class CoreListView(ListView):
     def get_queryset(self):
         return Shot.objects.filter(user=self.request.user)
     
-class ShotCreateView(CreateView):
+
     model = Shot
     form_class = ShotForm
     template_name = 'core/scorecard.html'
