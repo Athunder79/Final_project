@@ -58,7 +58,7 @@ class Shot(models.Model):
     end_latitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=True)
     end_longitude = models.DecimalField(max_digits=9, decimal_places=7, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    shot_distance = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
+    shot_distance = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse('scorecard-create')
@@ -114,8 +114,9 @@ class Shot(models.Model):
             c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
             # Radius of the Earth in kilometers * c *1000 to get meters
-            distance = 6371 * c 
+            distance = 6371 * c * 1093.61
+            distance_rounded = round(distance,1)
 
             # Update previous shot's distance
-            previous_shot.shot_distance = distance
+            previous_shot.shot_distance = distance_rounded
             previous_shot.save(update_fields=['shot_distance'])
