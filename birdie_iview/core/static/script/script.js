@@ -11,7 +11,6 @@ addEventListener('DOMContentLoaded', function () {
 })
 
 
-
 // Get the latitude and longitude from browser for shot form
 function getLocation()
   {
@@ -31,7 +30,6 @@ function updateShotEndPosition(){
   else{result.innerHTML="Geolocation is not supported by this browser.";}
 }
 
-
 function showEndPosition(position){
   lat=position.coords.latitude;
   lon=position.coords.longitude;
@@ -39,8 +37,6 @@ function showEndPosition(position){
   document.getElementById("end_longitude").value= lon;
   document.getElementById("endHole").submit()
 }
-
-
 
 
 // add the latitude and longitude to the form and post

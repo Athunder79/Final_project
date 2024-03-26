@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.urls import reverse
 from typing import Any
 from django.http import JsonResponse, HttpResponseForbidden
@@ -24,6 +25,11 @@ def home(request):
 # course and round details
 @login_required
 def start_round(request):
+    # Check if the user has added clubs to their bag
+    if not Clubs.objects.filter(user=request.user).exists():
+        messages.error(request, "You have not added any clubs to your bag. Please add a clubs to continue.")
+        return redirect('clubs')
+
     if request.method == 'POST':
         course_id = request.POST.get('course')
         course = get_object_or_404(Course, pk=course_id)
@@ -97,9 +103,6 @@ def scorecard(request, hole_id):
     total_par = 0
     total_shots = 0
     running_scores = []
-
-
-
 
     for hole in holes:
         hole.shot_count = shots.filter(hole=hole).count()

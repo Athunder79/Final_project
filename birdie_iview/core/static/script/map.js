@@ -85,7 +85,7 @@ function initMap(data, userLocation, roundId) {
                             <h3>Hole ${holeNum}</h3>
                             <p><strong>Shot:</strong> ${index + 1}</p>
                             <p><strong>Club:</strong> ${shot.details.club__club_name}</p>
-                            <p><strong>Distance:</strong> ${shot.details.shot_distance} Metres</p>
+                            <p><strong>Distance:</strong> ${shot.details.shot_distance} Yrds</p>
                         </div>
                     `
                 });
