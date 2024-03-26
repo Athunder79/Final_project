@@ -48,9 +48,9 @@
               <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutform').submit()">Logout</a></li>
             </ul>
           </li>
-          {% if user.is_authenticated and incomplete_rounds %}
+          {% if user.is_authenticated and incomplete_rounds_info %}
           <li class="nav-item">
-              <a class="nav-link" href="{% url 'scorecard' hole_id=incomplete_rounds.0.id %}">Resume Round</a>
+              <a class="nav-link" href="{% url 'scorecard' hole_id=incomplete_rounds_info.hole_id %}">Resume Round</a>
           </li>
           {% endif %}
           {% else %}

@@ -13,19 +13,10 @@ import googlemaps
 import json
 
 
-# context processor to display incomplete rounds
-def incomplete_rounds(request):
-    if request.user.is_authenticated:
-        return {'incomplete_rounds': Round.objects.filter(user=request.user, round_completed=False)}
-    else:
-        return {'incomplete_rounds': None}
-
 # Create your views here.
+
 def home(request):
-    incomplete_rounds = None
-    if request.user.is_authenticated:
-        incomplete_rounds = Round.objects.filter(user=request.user, round_completed=False)
-    return render(request, 'core/home.html', {'incomplete_rounds': incomplete_rounds})
+    return render(request, 'core/home.html')
 
 # course and round details
 @login_required
@@ -186,17 +177,6 @@ def next_hole(request, hole_id, course_id, round_id):
         round.save()
 
     return redirect(hole_details, course_id=course_id, round_id=round_id)
-
-@login_required
-def resume_round(request, round_id):
-    
-    round_obj = get_object_or_404(Round, pk=round_id, user=request.user, round_completed=False)
-    
-    last_shot = Shot.objects.filter(round=round_obj).order_by('-created_at').first()
-    if last_shot:
-        return redirect('scorecard', hole_id=last_shot.hole_id)
-    else:
-        return redirect('core-home')
     
 def find_golf_courses(request):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
@@ -290,8 +270,6 @@ def mapshots(request):
                         ))
   
     return JsonResponse (result_list, safe=False)
-
-
 
 class ScoreListView(LoginRequiredMixin,ListView):
     template_name = 'core/rounds.html'
