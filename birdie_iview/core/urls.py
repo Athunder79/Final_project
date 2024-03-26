@@ -14,6 +14,7 @@ urlpatterns = [
     path('hole-details/<int:course_id>/<int:round_id>/<int:hole_id>/next/', views.next_hole, name='next-hole'),
     path('map-shots',views.mapshots, name='map-shots'),
     path('rounds/', ScoreListView.as_view(), name='rounds'),
+    path('resume-round/<int:round_id>/', views.resume_round, name='resume-round'),
 
     
 ]

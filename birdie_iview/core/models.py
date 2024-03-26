@@ -22,11 +22,11 @@ class Course(models.Model):
         return self.name
 
 class Round(models.Model):
-
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     round_date = models.DateField(auto_now_add=True)
+    round_completed = models.BooleanField(default=False)
 
 
     def __str__(self):
@@ -70,8 +70,6 @@ class Shot(models.Model):
         self.shot_num_per_hole = F('shot_num_per_hole') + 1
 
     def save(self, *args, **kwargs):
-        print("Self.pk:",self.pk)
-        print("Self.shot_num_per_hole:",self.shot_num_per_hole)
         if not self.pk: 
             if self.shot_num_per_hole > 0:  # If not the first shot of the hole
 
@@ -87,9 +85,6 @@ class Shot(models.Model):
     def _update_previous_shot_end_coordinates(self):
         previous_shot = Shot.objects.filter(user=self.user).order_by('-created_at').first()
 
-        print("previou shot:",previous_shot)
-        print("previous shot Number Per Hole:", previous_shot.shot_num_per_hole)
-
         if previous_shot and previous_shot.shot_num_per_hole >= 0: # If there is a previous shot and meets the condition
             previous_shot.end_latitude = self.latitude
             previous_shot.end_longitude = self.longitude
@@ -98,8 +93,7 @@ class Shot(models.Model):
     def _calculate_distance(self):
         previous_shot = Shot.objects.filter(user=self.user).order_by('-created_at').first()
 
-        if previous_shot and previous_shot.latitude is not None and previous_shot.longitude is not None \
-                and previous_shot.end_latitude is not None and previous_shot.end_longitude is not None:
+        if previous_shot and all(getattr(previous_shot, attr) is not None for attr in ['latitude', 'longitude', 'end_latitude', 'end_longitude']):
             start_lat = radians(float(previous_shot.latitude))
             start_lon = radians(float(previous_shot.longitude))
             end_lat = radians(float(previous_shot.end_latitude))
