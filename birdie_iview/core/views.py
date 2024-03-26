@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, ListView
 from django.conf import settings
 from .forms import ShotForm, RoundForm, HoleForm
-from django.db.models import Count, Avg, When, Case
+from django.db.models import Count, Avg, Max
 from .models import Shot, Course, Round, Clubs, Hole
 import googlemaps
 import json
@@ -287,6 +287,14 @@ class ScoreListView(LoginRequiredMixin, ListView):
             .annotate(total_shots=Count('id'), average_distance=Avg('shot_distance'))
         )
         context['shots_per_club_all'] = shots_per_club_all
+
+        furthest_shots_per_club = (
+            Shot.objects.filter(user=self.request.user)
+            .values('club__club_name')
+            .annotate(furthest_distance=Max('shot_distance'))
+        )
+        context['furthest_shots_per_club'] = furthest_shots_per_club
+
 
         return context
 

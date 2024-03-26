@@ -6,7 +6,7 @@
 {% if user.is_authenticated %}
 
 <!-- Stats per clubs -->
-<h1>Stats per Clubs</h1>
+<h1>All Time Club Stats</h1>
 <div class="content-section">
     <div id="clubs" class="table-responsive">
         <table id="clubs-body" class="table">
@@ -14,7 +14,8 @@
                 <tr>
                     <th scope="col">Club</th>
                     <th scope="col">Total Shots</th>
-                    <th scope="col">Average Shot Distance</th>
+                    <th scope="col">Average Shot (yds)</th>
+                    <th scope="col">Furthest Shot (yds)</th>
                 </tr>
             </thead>
 
@@ -23,7 +24,12 @@
                 <tr>
                     <td>{{ club_stat.club__club_name }}</td>
                     <td>{{ club_stat.total_shots }}</td>
-                    <td>{{ club_stat.average_distance }}</td>
+                    <td>{{ club_stat.average_distance|floatformat:"0" }}</td>
+                    {% for furthest_shot in furthest_shots_per_club %}
+                        {% if furthest_shot.club__club_name == club_stat.club__club_name %}
+                            <td>{{ furthest_shot.furthest_distance|floatformat:"0" }}</td>
+                        {% endif %}
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </tbody>
@@ -57,7 +63,7 @@
                     <td>{{ shot.round_id }}</td>
                     <td>{{ shot.shot_num_per_hole }}</td>
                     <td>{{ shot.hole_num }}</td>
-                    <td>{{ shot.club.club_name }}</td> 
+                    <td>{{ shot.club.club_name }}</td>
                     <td>{{ shot.hole_par }}</td>
                     <td>{{ shot.shot_distance }}</td>
                 </tr>
