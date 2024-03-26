@@ -5,8 +5,34 @@
 
 {% if user.is_authenticated %}
 
-<h1>Rounds You've Played Details</h1>
+<!-- Stats per clubs -->
+<h1>Stats per Clubs</h1>
+<div class="content-section">
+    <div id="clubs" class="table-responsive">
+        <table id="clubs-body" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Club</th>
+                    <th scope="col">Total Shots</th>
+                    <th scope="col">Average Shot Distance</th>
+                </tr>
+            </thead>
 
+            <tbody>
+                {% for club_stat in shots_per_club_all %}
+                <tr>
+                    <td>{{ club_stat.club__club_name }}</td>
+                    <td>{{ club_stat.total_shots }}</td>
+                    <td>{{ club_stat.average_distance }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<h1>Rounds You've Played Details</h1>
 {% for round_item in round %}
 <div class="content-section">
     <div id="round" class="table-responsive">
@@ -31,7 +57,7 @@
                     <td>{{ shot.round_id }}</td>
                     <td>{{ shot.shot_num_per_hole }}</td>
                     <td>{{ shot.hole_num }}</td>
-                    <td>{{ shot.club }}</td>
+                    <td>{{ shot.club.club_name }}</td> 
                     <td>{{ shot.hole_par }}</td>
                     <td>{{ shot.shot_distance }}</td>
                 </tr>

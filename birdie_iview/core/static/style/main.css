@@ -139,13 +139,13 @@ map {
 }
 
 #map {
-  height: 400px;  /* Adjust the height as needed */
-  width: 100%;     /* Adjust the width as needed */
-    /* Float the map view to the left */
+  height: 700px;  
+  width: 100%;     
+   
 }
 #golf-courses {
-   /* Float the list of golf courses to the right */
-  width: 50%;     /* Adjust the width as needed */
+  
+  width: 50%;     
 }
 
 .white {

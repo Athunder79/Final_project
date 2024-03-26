@@ -8,6 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, ListView
 from django.conf import settings
 from .forms import ShotForm, RoundForm, HoleForm
+from django.db.models import Count, Avg, When, Case
 from .models import Shot, Course, Round, Clubs, Hole
 import googlemaps
 import json
@@ -271,21 +272,26 @@ def mapshots(request):
   
     return JsonResponse (result_list, safe=False)
 
-class ScoreListView(LoginRequiredMixin,ListView):
+class ScoreListView(LoginRequiredMixin, ListView):
     template_name = 'core/rounds.html'
     context_object_name = 'data'
+
     def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            context['shot'] = Shot.objects.filter(user=self.request.user)
-            context['round'] = Round.objects.filter(user=self.request.user)
-            context['hole'] = Hole.objects.filter(round__user=self.request.user)
-            context['course'] = Course.objects.filter(round__user=self.request.user)
-        
-            return context        
-       
+        context = super().get_context_data(**kwargs)
+        context['round'] = Round.objects.filter(user=self.request.user)
+
+        # Query to calculate statistics per club for all shots
+        shots_per_club_all = (
+            Shot.objects.filter(user=self.request.user)
+            .values('club__club_name')
+            .annotate(total_shots=Count('id'), average_distance=Avg('shot_distance'))
+        )
+        context['shots_per_club_all'] = shots_per_club_all
+
+        return context
+
     def get_queryset(self):
-        # Override the get_queryset method 
-        return Shot.objects.none()
+        return Shot.objects.filter(user=self.request.user)
 
 class CoreListView(ListView):
     template_name = 'core/home.html'
