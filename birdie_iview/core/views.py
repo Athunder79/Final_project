@@ -17,8 +17,6 @@ import json
 # Create your views here.
 
 def home(request):
-        
-
   
         return render(request, 'core/home.html')
 
@@ -157,6 +155,11 @@ def scorecard(request, hole_id):
 # return to hole_details with the course_id and round_id
 @login_required
 def next_hole(request, hole_id, course_id, round_id):
+    # Check if user has added a shot for the current hole
+    if not Shot.objects.filter(hole=hole_id).exists():
+        messages.error(request, "Hole not played please add a shots to continue.")
+        return redirect('scorecard', hole_id=hole_id)
+    
     hole = get_object_or_404(Hole, pk=hole_id)
 
 
