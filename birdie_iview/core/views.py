@@ -27,6 +27,11 @@ def start_round(request):
         messages.error(request, "You have not added any clubs to your bag. Please add a clubs to continue.")
         return redirect('clubs')
 
+    # Check if user has a round in progress
+    if Round.objects.filter(user=request.user, round_completed=False).exists():
+        messages.error(request, "You have a round in progress. Please complete the round before starting a new one or finish it early.")
+        return redirect('scorecard', hole_id=Hole.objects.filter(round__user=request.user).last().id)
+
     if request.method == 'POST':
         course_id = request.POST.get('course')
         course = get_object_or_404(Course, pk=course_id)
@@ -113,8 +118,9 @@ def scorecard(request, hole_id):
         longitude = request.POST.get('longitude')
         club_id = request.POST.get('club')
 
-        if club_id is None:
-            return JsonResponse({'error': 'Club ID is required'}, status=400)
+        if club_id is '' or club_id is None:
+            messages.error(request, "Please select a club.")
+            return redirect('scorecard', hole_id=hole_id)
         
         # Get the Clubs instance 
         club = get_object_or_404(Clubs, pk=club_id, user=request.user)
@@ -171,7 +177,7 @@ def next_hole(request, hole_id, course_id, round_id):
         shot.end_longitude = end_longitude
         shot.save()
     
-    # check if it is the last hole of the round and update the round status
+    # check if it is the last hole of the round and update the round status and calculate the shot distance of the final shot
     if hole.hole_num == 18:
         round = Round.objects.get(pk=round_id)
         round.round_completed = 'True'

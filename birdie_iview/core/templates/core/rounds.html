@@ -47,11 +47,10 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Round</th>
-                    <th scope="col">Shot Per Hole</th>
                     <th scope="col">Hole Number</th>
-                    <th scope="col">Club</th>
                     <th scope="col">Par</th>
+                    <th scope="col">Shot Per Hole</th>
+                    <th scope="col">Club</th>
                     <th scope="col">Shot Distance</th>
                 </tr>
             </thead>
@@ -60,12 +59,11 @@
                 {% for shot in round_item.shot_set.all %}
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ shot.round_id }}</td>
-                    <td>{{ shot.shot_num_per_hole }}</td>
                     <td>{{ shot.hole_num }}</td>
-                    <td>{{ shot.club.club_name }}</td>
                     <td>{{ shot.hole_par }}</td>
-                    <td>{{ shot.shot_distance }}</td>
+                    <td>{{ shot.shot_num_per_hole|add:1 }}</td>
+                    <td>{{ shot.club.club_name }}</td>
+                    <td>{{ shot.shot_distance|floatformat:"0" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
