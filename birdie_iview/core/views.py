@@ -278,6 +278,19 @@ def mapshots(request):
   
     return JsonResponse (result_list, safe=False)
 
+# finish round early
+@login_required
+def finish_round(request, round_id):
+    round = get_object_or_404(Round, pk=round_id)
+
+    if round.user != request.user:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+    
+    # update the round status to completed
+    round.round_completed = 'True'
+    round.save()
+    return redirect('scorecard', hole_id=Hole.objects.filter(round__user=request.user).last().id)
+
 class ScoreListView(LoginRequiredMixin, ListView):
     template_name = 'core/rounds.html'
     context_object_name = 'data'

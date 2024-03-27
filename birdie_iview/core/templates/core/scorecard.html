@@ -192,6 +192,14 @@
 </div>
 
 
+<form action="{% url 'finish-round' round_id=current_hole.round.id %}" method="POST">
+    {% csrf_token %}
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <button class="btn btn-primary" type="submit">Finish Round</button>
+    </div>
+</form>
+
+
     {% endif %}
 
     {% endblock %}
