@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse
 from typing import Any
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden, HttpRequest
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, ListView
@@ -31,6 +31,17 @@ def start_round(request):
     if Round.objects.filter(user=request.user, round_completed=False).exists():
         messages.error(request, "You have a round in progress. Please complete the round before starting a new one or finish it early.")
         return redirect('scorecard', hole_id=Hole.objects.filter(round__user=request.user).last().id)
+    
+        # Check if user has a round in progress
+    if Round.objects.filter(user=request.user, round_completed=False).exists():
+        round_id = Round.objects.filter(user=request.user, round_completed=False).first().id
+        error_message = "You have a round in progress. Please complete the round before starting a new one or finish it early. "
+        error_message += "<form action='{% url 'finish-round' round_id=round_id %}' method='POST'>{% csrf_token %}"
+        error_message += "<div class='d-grid gap-2 col-6 mx-auto'>"
+        error_message += "<button class='btn btn-primary' type='submit'>Finish Round</button>"
+        error_message += "</div></form>"
+        messages.error(request, mark_safe(error_message))
+        return redirect('core-home')
 
     if request.method == 'POST':
         course_id = request.POST.get('course')
@@ -118,8 +129,8 @@ def scorecard(request, hole_id):
         longitude = request.POST.get('longitude')
         club_id = request.POST.get('club')
 
-        if club_id is '' or club_id is None:
-            messages.error(request, "Please select a club.")
+        if club_id == '' or club_id is None:
+            messages.error(request, "Shot not added! Please select a club before taking the shot.")
             return redirect('scorecard', hole_id=hole_id)
         
         # Get the Clubs instance 
@@ -185,7 +196,7 @@ def next_hole(request, hole_id, course_id, round_id):
 
     return redirect(hole_details, course_id=course_id, round_id=round_id)
     
-def find_golf_courses(request):
+def find_golf_courses(request:HttpRequest):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
     key = settings.GOOGLE_MAPS_API_KEY
 
@@ -289,7 +300,7 @@ def finish_round(request, round_id):
     # update the round status to completed
     round.round_completed = 'True'
     round.save()
-    return redirect('scorecard', hole_id=Hole.objects.filter(round__user=request.user).last().id)
+    return redirect('core-home')
 
 class ScoreListView(LoginRequiredMixin, ListView):
     template_name = 'core/rounds.html'
