@@ -245,8 +245,8 @@ def find_golf_courses(request:HttpRequest):
                 longitude=longitude
             )
 
-            # Sort the golf courses by distance in ascending order
-            golf_courses.sort(key=lambda x: x['distance'])
+            # Sort the golf courses by distance in ascending order remove km from the distance and convert to float
+            golf_courses.sort(key=lambda x: float(x['distance'].split()[0]))
 
             context = {
                 'key': key,
