@@ -2,5 +2,7 @@ db.sqlite3
 __pycache__/
 .env
 staticfiles/
-
+findcourse.js
+htmlcov/
+.coverage
 

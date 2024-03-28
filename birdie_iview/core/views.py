@@ -119,6 +119,22 @@ def scorecard(request, hole_id):
         total_shots += hole.shot_count
         running_scores.append(total_shots - total_par)
 
+    # Calculate totals for In and Out columns and total table
+    in_total_dist = sum(hole.hole_distance for hole in holes[:9])
+    in_total_par = sum(hole.hole_par for hole in holes[:9])
+    in_total_shots = sum(hole.shot_count for hole in holes[:9])
+    in_total_score = in_total_shots - in_total_par
+
+    out_total_dist = sum(hole.hole_distance for hole in holes[9:])
+    out_total_par = sum(hole.hole_par for hole in holes[9:])
+    out_total_shots = sum(hole.shot_count for hole in holes[9:])
+    out_total_score = out_total_shots - out_total_par
+
+    total_distance = in_total_dist + out_total_dist
+    total_par = total_par + out_total_par
+    total_shots = total_shots + out_total_shots
+    total_score = total_shots - total_par
+
     # Get data from the form
     if request.method == 'POST':
         latitude = request.POST.get('latitude')
@@ -150,19 +166,32 @@ def scorecard(request, hole_id):
     else:
         form = ShotForm(user=request.user)
 
-    return render(request, 'core/scorecard.html', {
-        'form': form, 
-        'hole_num': hole_num, 
-        'shots': shots, 
-        'holes': holes,
-        'current_hole': current_hole,
-        'shot_count': shot_count,
-        'score': score,
-        'current_shot': current_shot,
+    context = { 
         'key': key,
+        'current_hole': current_hole,
         'round_id': round_id,
-        'running_scores': running_scores
-    })
+        'hole_num': hole_num,
+        'shot_count': shot_count,
+        'current_shot': current_shot,
+        'score': score,
+        'holes': holes,
+        'running_scores': running_scores,
+        'in_total_dist': in_total_dist,
+        'in_total_par': in_total_par,
+        'in_total_shots': in_total_shots,
+        'in_total_score': in_total_score,
+        'out_total_dist': out_total_dist,
+        'out_total_par': out_total_par,
+        'out_total_shots': out_total_shots,
+        'out_total_score': out_total_score,
+        'total_distance': total_distance,
+        'total_par': total_par,
+        'total_shots': total_shots,
+        'total_score': total_score,
+        'form': form,
+    }
+
+    return render(request, 'core/scorecard.html', context)
 
 # return to hole_details with the course_id and round_id
 @login_required

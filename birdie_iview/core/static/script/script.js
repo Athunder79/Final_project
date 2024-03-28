@@ -1,13 +1,17 @@
 addEventListener('DOMContentLoaded', function () {
 
+
+
   let location = document.getElementById("location");
   let map = document.getElementById("toggle-map");
   let nextHole = document.getElementById("next-hole");
+  let currentHole = document.getElementById("current-hole");
 
   // check if the element exists before adding the event listener
   if (location != null){location.addEventListener("click", getLocation);}
   if (map != null){map.addEventListener("click", showMap);}
   if (nextHole != null){nextHole.addEventListener("click", updateShotEndPosition);}
+  if (currentHole != null){colourCells();}
 })
 
 
@@ -74,4 +78,16 @@ function showMap(){
     document.getElementById("show-map").innerHTML = "Hide Map"
   }
 
+}
+
+function colourCells() {
+  hole = parseInt(document.getElementById("current-hole").innerText);
+  for (let i = 1; i <= hole; i++) 
+  if (parseInt(document.getElementById("scor" + i).innerText) > parseInt(document.getElementById("par" + i).innerText)) {
+      document.getElementById("scor" + i).className = "overpar";
+  } else if (parseInt(document.getElementById("scor" + i).innerText) < parseInt(document.getElementById("par" + i).innerText)) {
+      document.getElementById("scor" + i).className = "underpar";
+  } else {
+      document.getElementById("scor" + i).className = "par";
+  }
 }

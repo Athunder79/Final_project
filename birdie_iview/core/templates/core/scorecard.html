@@ -7,7 +7,7 @@
 
 {% if user.is_authenticated %}
 
-<h1 class="hole-heading">Hole {{ hole_num }}</h1>
+<h1 class="hole-heading">Hole <span id="current-hole">{{ hole_num }}</span></h1>
 <h2 class="shot-heading">Shot: {{ current_shot }}</h2>
 <!-- <h2>Par: {{ hole_par }}</h2>
 <h2>Hole Distance: {{ hole_distance }}</h2> -->
@@ -60,6 +60,7 @@
 </div>
 
 <!-- Scorecard table -->
+
 <div class="scorecard">
     <table class="tables">
 
@@ -69,15 +70,9 @@
         <tbody>
             <tr>
                 <th scope="col">Hole</th>
-                <th scope="col">1</th>
-                <th scope="col">2</th>
-                <th scope="col">3</th>
-                <th scope="col">4</th>
-                <th scope="col">5</th>
-                <th scope="col">6</th>
-                <th scope="col">7</th>
-                <th scope="col">8</th>
-                <th scope="col">9</th>
+                {% for hole in holes|slice:":9" %}
+                <th scope="col">{{ hole.hole_num }}</th>
+                {% endfor %}
                 <th scope="col">In</th>
             </tr>
             <tr>
@@ -85,7 +80,7 @@
                 {% for hole in holes|slice:":9" %}
                 <td>{{ hole.hole_distance }}</td>
                 {% endfor %}
-                <td id="totalFrontDist"></td>
+                <td id="totalFrontDist">{{ in_total_dist }}</td>
 
             </tr>
             <tr>
@@ -93,26 +88,27 @@
                 {% for hole in holes|slice:":9" %}
                 <td id="par{{ hole.hole_num }}">{{ hole.hole_par }}</td>
                 {% endfor %}
-                <td id="totalFrontPar"></td>
+                <td id="totalFrontPar">{{ in_total_par }}</td>
             </tr>
             <tr>
                 <td>Shots</td>
                 {% for hole in holes|slice:":9" %}
-                <td id="scor1">{{ hole.shot_count }}</td>
+                <td id="scor{{ hole.hole_num }}">{{ hole.shot_count }}</td>
                 {% endfor %}
 
-                <td id="totalFrontScor"></td>
+                <td id="totalFrontScor">{{ in_total_shots }}</td>
             </tr>
             <tr>
                 <td>Score</td>
                 {% for running_score in running_scores|slice:":9" %}
                 <td>{{ running_score }}</td>
                 {% endfor %}
-                <td id="totalFrontOU"></td>
+                <td id="totalFrontOU">{{ in_total_score }}</td>
             </tr>
         </tbody>
     </table>
 
+    {% if hole_num > 9 %}
     <table class="back9heading tables">
         <caption>
             <h2>Back 9</h2>
@@ -120,15 +116,10 @@
         <tbody>
             <tr>
                 <th scope="col">Hole</th>
-                <th scope="col">10</th>
-                <th scope="col">11</th>
-                <th scope="col">12</th>
-                <th scope="col">13</th>
-                <th scope="col">14</th>
-                <th scope="col">15</th>
-                <th scope="col">16</th>
-                <th scope="col">17</th>
-                <th scope="col">18</th>
+                {% for hole in holes|slice:"9:" %}
+                <th scope="col">{{ hole.hole_num }}</th>
+                {% endfor %}
+
                 <th scope="col">Out</th>
             </tr>
             <tr>
@@ -136,32 +127,32 @@
                 {% for hole in holes|slice:"9:" %}
                 <td>{{ hole.hole_distance }}</td>
                 {% endfor %}
-                <td id="totalBkDis">f</td>
+                <td id="totalBkDis">{{ out_total_dist }}</td>
             </tr>
             <tr>
                 <td>Par</td>
                 {% for hole in holes|slice:"9:" %}
-                <td>{{ hole.hole_par }}</td>
+                <td id="par{{ hole.hole_num }}">{{ hole.hole_par }}</td>
                 {% endfor %}
-                <td id="totalBkPar">f</td>
+                <td id="totalBkPar">{{ out_total_par }}</td>
             </tr>
             <tr>
                 <td>Shots</td>
                 {% for hole in holes|slice:"9:" %}
-                <td>{{ hole.shot_count }}</td>
+                <td id="scor{{ hole.hole_num }}" class="shot-cell">{{ hole.shot_count }}</td>
                 {% endfor %}
-                <td id="totalBkScor">f</td>
+                <td id="totalBkScor">{{ out_total_shots }}</td>
             </tr>
             <tr>
                 <td>Score</td>
                 {% for running_score in running_scores|slice:"9:" %}
                 <td>{{ running_score }}</td>
                 {% endfor %}
-                <td id="totalBkOu">f</td>
+                <td id="totalBkOu">{{ out_total_score }}</td>
             </tr>
         </tbody>
     </table>
-
+{% endif %}
     <table class="tableTotal">
         <caption>
             <h2>Total Round Score</h2>
@@ -173,19 +164,19 @@
             </tr>
             <tr>
                 <td>Total Distance</td>
-                <td id="totalRndDis">0</td>
+                <td id="totalRndDis">{{ total_distance }}</td>
             </tr>
             <tr>
                 <td>Course Par</td>
-                <td id="totalRndPar">0</td>
+                <td id="totalRndPar">{{ total_par }}</td>
             </tr>
             <tr>
                 <td>Total Shots</td>
-                <td id="totalRndScor">0</td>
+                <td id="totalRndScor">{{ total_shots }}</td>
             </tr>
             <tr>
                 <td>Total Score</td>
-                <td id="totalRndOu">0</td>
+                <td id="totalRndOu">{{ total_score }}</td>
             </tr>
         </tbody>
     </table>
@@ -195,9 +186,12 @@
 <form action="{% url 'finish-round' round_id=current_hole.round.id %}" method="POST">
     {% csrf_token %}
     <div class="d-grid gap-2 col-6 mx-auto">
-        <button class="btn btn-primary" type="submit">Finish Round</button>
+        <button class="btn btn-primary" type="submit">Finish Round Early</button>
     </div>
 </form>
+
+
+
 
 
     {% endif %}

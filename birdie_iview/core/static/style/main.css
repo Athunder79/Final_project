@@ -1,6 +1,9 @@
 body {
-  background: #dedddd;
-  color: #333333;
+  background-image: url(https://athunder79.github.io/imagehost/images/background.png);
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: #787676;
+  background-blend-mode: overlay;
   margin-top: 5rem;
 }
 
@@ -51,6 +54,18 @@ body {
   justify-content: space-around;
   padding-top: 15px;
 
+}
+
+.underpar {
+  background-color: #7cea7c;
+}
+
+.par {
+  background-color: lightblue;
+}
+
+.overpar {
+  background-color: #bc3c3c;
 }
 
 caption {
