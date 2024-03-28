@@ -61,6 +61,9 @@ def hole_details(request, course_id, round_id):
     # check if user is the owner of the round
     if round_obj.user != request.user:
         return HttpResponseForbidden("You don't have permission to access this page.")
+    
+
+   
 
     next_hole_num = 1  # Initialize next_hole_num variable
 
@@ -75,8 +78,14 @@ def hole_details(request, course_id, round_id):
             hole = form.save(commit=False)
             hole.course = course_obj
             hole.round = round_obj
-            hole.save()
 
+            try:
+                hole.save()
+            except ValueError as e:
+                # Catch the ValueError raised by the model and display it to the user
+                messages.error(request, str(e))
+                return redirect('scorecard', hole_id=latest_hole.id)  # Redirect to the latest hole id
+      
             # Redirect to the scorecard view passing the hole_id
             return redirect('scorecard', hole_id=hole.id)
     else:

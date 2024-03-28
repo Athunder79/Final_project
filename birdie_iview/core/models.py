@@ -40,6 +40,13 @@ class Hole(models.Model):
     hole_par = models.IntegerField(null=False, blank=False)
     hole_distance = models.IntegerField(null=True, blank=True)
 
+    # check if the hole_num is unique for the round if not raise an error
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            if Hole.objects.filter(round=self.round, hole_num=self.hole_num).exists():
+                raise ValueError('This hole number already exists for this round. Please continue or finsh the hole')
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'{self.course} - Hole {self.hole_num}'
 
