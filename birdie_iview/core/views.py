@@ -29,19 +29,15 @@ def start_round(request):
 
     # Check if user has a round in progress
     if Round.objects.filter(user=request.user, round_completed=False).exists():
-        messages.error(request, "You have a round in progress. Please complete the round before starting a new one or finish it early.")
-        return redirect('scorecard', hole_id=Hole.objects.filter(round__user=request.user).last().id)
+        last_open_round = Round.objects.filter(user=request.user, round_completed=False).last()
+        # check it hole exists for the round
+        if Hole.objects.filter(round=last_open_round).exists():
+            messages.error(request, "You have a round in progress. Please complete the round before starting a new one or finish it early.")
+            return redirect('scorecard', hole_id=Hole.objects.filter(round__user=request.user).last().id)
+        else:
+            messages.error(request, "You have a round in progress. Please complete the round before starting a new one or finish it early.")
+            return redirect('hole-details', course_id=last_open_round.course.id, round_id=last_open_round.id)
     
-        # Check if user has a round in progress
-    if Round.objects.filter(user=request.user, round_completed=False).exists():
-        round_id = Round.objects.filter(user=request.user, round_completed=False).first().id
-        error_message = "You have a round in progress. Please complete the round before starting a new one or finish it early. "
-        error_message += "<form action='{% url 'finish-round' round_id=round_id %}' method='POST'>{% csrf_token %}"
-        error_message += "<div class='d-grid gap-2 col-6 mx-auto'>"
-        error_message += "<button class='btn btn-primary' type='submit'>Finish Round</button>"
-        error_message += "</div></form>"
-        messages.error(request, mark_safe(error_message))
-        return redirect('core-home')
 
     if request.method == 'POST':
         course_id = request.POST.get('course')
@@ -87,7 +83,7 @@ def hole_details(request, course_id, round_id):
         initial_data = {'hole_num': next_hole_num}  # Pre-populate the hole number
         form = HoleForm(initial=initial_data)
 
-    return render(request, 'core/hole_details.html', {'next_hole_num': next_hole_num,'form': form})
+    return render(request, 'core/hole_details.html', {'next_hole_num': next_hole_num,'form': form, 'round_id': round_id})
 
 # shot tracking and scorecard
 @login_required
