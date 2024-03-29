@@ -6,12 +6,14 @@ addEventListener('DOMContentLoaded', function () {
   let map = document.getElementById("toggle-map");
   let nextHole = document.getElementById("next-hole");
   let currentHole = document.getElementById("current-hole");
+  let atMyBall = document.getElementById("at-my-ball");
 
   // check if the element exists before adding the event listener
   if (location != null){location.addEventListener("click", getLocation);}
   if (map != null){map.addEventListener("click", showMap);}
   if (nextHole != null){nextHole.addEventListener("click", updateShotEndPosition);}
   if (currentHole != null){colourCells();}
+  if (atMyBall != null){atMyBall.addEventListener("click", updateShotEndShotPosition);}
 })
 
 
@@ -23,8 +25,7 @@ function getLocation()
     navigator.geolocation.getCurrentPosition(showPosition,showError);
     }
   else{result.innerHTML="Geolocation is not supported by this browser.";}
-  }
-
+}
 
 function updateShotEndPosition(){
   if (navigator.geolocation)
@@ -34,6 +35,15 @@ function updateShotEndPosition(){
   else{result.innerHTML="Geolocation is not supported by this browser.";}
 }
 
+function updateShotEndShotPosition(){
+  if (navigator.geolocation)
+    {
+    navigator.geolocation.getCurrentPosition(showEndShotPosition,showError);
+    }
+  else{result.innerHTML="Geolocation is not supported by this browser.";}
+}
+
+
 function showEndPosition(position){
   lat=position.coords.latitude;
   lon=position.coords.longitude;
@@ -42,7 +52,13 @@ function showEndPosition(position){
   document.getElementById("endHole").submit()
 }
 
-
+function showEndShotPosition(position){
+  lat=position.coords.latitude;
+  lon=position.coords.longitude;
+  document.getElementById("end_shot_latitude").value= lat;
+  document.getElementById("end_shot_longitude").value= lon;
+  document.getElementById("endShot").submit()
+}
 // add the latitude and longitude to the form and post
 function showPosition(position)
   {

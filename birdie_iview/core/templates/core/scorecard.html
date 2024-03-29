@@ -8,17 +8,19 @@
 {% if user.is_authenticated %}
 
 <h1 class="hole-heading">Hole <span id="current-hole">{{ hole_num }}</span></h1>
-<h2 class="shot-heading">Shot: {{ current_shot }}</h2>
+{% if shot.shot_distance is not None %}
+    <h2 class="shot-heading">Shot: {{ current_shot }}</h2>
+    <h3>Last Shot: {{shot.club}} {{ shot.shot_distance }}yrds</h3>
+ {% endif %}
 <!-- <h2>Par: {{ hole_par }}</h2>
 <h2>Hole Distance: {{ hole_distance }}</h2> -->
 
 <p class="warning" id="result"></p>
+{% if shot.shot_distance is not None %}
 <form id="shotForm" method="POST">
     {% csrf_token %}
     <fieldset class="form-group">
         <legend class="border-bottom mb-4"></legend>
-        <!-- <input type="text" id="latitude" placeholder="Latitude">
-            <input type="text" id="longitude" placeholder="Longitude"> -->
 
         {{ form|crispy }}
     </fieldset>
@@ -27,6 +29,19 @@
     </div>
     <br>
 </form>
+{% endif %}
+
+{% if shot.shot_distance is None %}
+<form id="endShot" action="{% url 'end-of-shot' course_id=current_hole.course.id round_id=current_hole.round.id hole_id=current_hole.id %}" method="POST">
+    {% csrf_token %}
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <input type="hidden" id="end_shot_latitude" name="end_shot_latitude" value="">
+        <input type="hidden" id="end_shot_longitude" name="end_shot_longitude" value="">
+        <button id="at-my-ball" class="btn btn-primary" type="button">I'm at my ball</button>
+    </div>
+    <br>
+</form>
+
 
 <!-- return to hole-details to enter next hole and add end coordinates to last shot  -->
 <form id="endHole" action="{% url 'next-hole' course_id=current_hole.course.id round_id=current_hole.round.id hole_id=current_hole.id %}" method="POST">
@@ -38,6 +53,8 @@
     </div>
     <br>
 </form>
+
+{% endif %}
 
 <!-- button to show or hide the map -->
 

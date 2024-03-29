@@ -18,7 +18,7 @@
     </form>
     {% endif %}
     {% endif %}
-
+    
     <form action="{% url 'finish-round' round_id=round_id %}" method="POST">
         {% csrf_token %}
         <div class="d-grid gap-2 col-6 mx-auto">
