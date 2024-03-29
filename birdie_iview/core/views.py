@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse
 from typing import Any
-from django.http import JsonResponse, HttpResponseForbidden, HttpRequest
+from django.http import JsonResponse, HttpResponseForbidden, HttpRequest, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, ListView
@@ -11,6 +11,8 @@ from .forms import ShotForm, RoundForm, HoleForm
 from django.db.models import Count, Avg, Max
 from .models import Shot, Course, Round, Clubs, Hole
 import googlemaps
+from math import radians, sin, cos, sqrt, atan2
+
 import json
 
 
@@ -61,9 +63,6 @@ def hole_details(request, course_id, round_id):
     # check if user is the owner of the round
     if round_obj.user != request.user:
         return HttpResponseForbidden("You don't have permission to access this page.")
-    
-
-   
 
     next_hole_num = 1  # Initialize next_hole_num variable
 
@@ -93,6 +92,7 @@ def hole_details(request, course_id, round_id):
         form = HoleForm(initial=initial_data)
 
     return render(request, 'core/hole_details.html', {'next_hole_num': next_hole_num,'form': form, 'round_id': round_id})
+
 
 # shot tracking and scorecard
 @login_required
@@ -175,6 +175,7 @@ def scorecard(request, hole_id):
     else:
         form = ShotForm(user=request.user)
 
+    shot = Shot.objects.filter(round=current_hole.round).order_by('-created_at').first()
     context = { 
         'key': key,
         'current_hole': current_hole,
@@ -198,9 +199,61 @@ def scorecard(request, hole_id):
         'total_shots': total_shots,
         'total_score': total_score,
         'form': form,
+        'shot': shot
     }
 
     return render(request, 'core/scorecard.html', context)
+
+@login_required
+def end_of_shot(request, hole_id, course_id, round_id):
+    # Retrieve the hole object
+    hole = get_object_or_404(Hole, pk=hole_id)
+    
+    # Fetch the latest shot for the current hole
+    shot = Shot.objects.filter(hole=hole).order_by('-created_at').first()
+
+    if request.method == 'POST':
+        end_latitude = request.POST.get('end_shot_latitude')
+        end_longitude = request.POST.get('end_shot_longitude')
+
+        if end_latitude is None or end_longitude is None:
+            # Handle case where end coordinates are not provided
+            return HttpResponseBadRequest("End coordinates not provided")
+
+        # Calculate the distance between the start and end points of the shot
+        if shot and shot.latitude and shot.longitude:
+            start_lat = radians(float(shot.latitude))
+            start_lon = radians(float(shot.longitude))
+            end_lat = radians(float(end_latitude))
+            end_lon = radians(float(end_longitude))
+
+            # Difference in coordinates
+            dlon = end_lon - start_lon
+            dlat = end_lat - start_lat
+
+            # Haversine formula
+            a = sin(dlat / 2)**2 + cos(start_lat) * cos(end_lat) * sin(dlon / 2)**2
+            c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+            # Radius of the Earth in kilometers * c *1093.61 to convert to yards
+            distance = 6371 * c * 1093.61
+            distance_rounded = round(distance,1)
+
+
+            # Update shot information with end coordinates and distance
+            shot.end_latitude = end_latitude
+            shot.end_longitude = end_longitude
+            shot.shot_distance = distance_rounded
+            shot.save()
+        else:
+            # Handle case where start coordinates are not available
+            return HttpResponseBadRequest("Start coordinates not available")
+
+        # Redirect to the scorecard page for the current hole
+        return redirect('scorecard', hole_id=hole_id)
+
+    # Redirect to the scorecard page for the current hole
+    return redirect('scorecard', hole_id=hole_id)
 
 # return to hole_details with the course_id and round_id
 @login_required
@@ -217,16 +270,42 @@ def next_hole(request, hole_id, course_id, round_id):
     if request.method == 'POST':
         end_latitude = request.POST.get('end_latitude')
         end_longitude = request.POST.get('end_longitude')
+
+        if end_latitude is None or end_longitude is None:
+            return HttpResponseBadRequest("End coordinates not provided")
+        
+        # Calculate the distance between the start and end points of the shot
         shot = Shot.objects.filter(hole=hole).order_by('-created_at').first()
-        shot.end_latitude = end_latitude
-        shot.end_longitude = end_longitude
-        shot.save()
-    
+        if shot and shot.latitude and shot.longitude:
+            start_lat = radians(float(shot.latitude))
+            start_lon = radians(float(shot.longitude))
+            end_lat = radians(float(end_latitude))
+            end_lon = radians(float(end_longitude))
+
+            # Difference in coordinates
+            dlon = end_lon - start_lon
+            dlat = end_lat - start_lat
+
+            # Haversine formula
+            a = sin(dlat / 2)**2 + cos(start_lat) * cos(end_lat) * sin(dlon / 2)**2
+            c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+            # Radius of the Earth in kilometers * c *1093.61 to convert to yards
+            distance = 6371 * c * 1093.61
+            distance_rounded = round(distance,1)
+
+            # Update shot information with end coordinates and distance
+            shot.end_latitude = end_latitude
+            shot.end_longitude = end_longitude
+            shot.shot_distance = distance_rounded
+            shot.save()
+
     # check if it is the last hole of the round and update the round status and calculate the shot distance of the final shot
     if hole.hole_num == 18:
-        round = Round.objects.get(pk=round_id)
-        round.round_completed = 'True'
-        round.save()
+        current_round = Round.objects.get(pk=round_id)
+        current_round.round_completed = 'True'
+        current_round.save()
+
 
     return redirect(hole_details, course_id=course_id, round_id=round_id)
     
