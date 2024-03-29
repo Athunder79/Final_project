@@ -21,14 +21,14 @@
 <body>
 
   <header class="site-header"></header>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-green fixed-top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-nav fixed-top">
     <div class="container">
       <a class="navbar-brand text-white" href="{% url 'core-home' %}">Birdie iView </a>
       {% if user.is_authenticated and incomplete_rounds_info %}
       <ul class="navbar-nav ms-auto">
-      <li class="nav-item highlight">
-        <a class="nav-link" href="{% url 'scorecard' hole_id=incomplete_rounds_info.hole_id %}">Return to Round</a>
-      </li>
+        <li class="nav-item highlight">
+          <a class="nav-link" href="{% url 'scorecard' hole_id=incomplete_rounds_info.hole_id %}">Return to Round</a>
+        </li>
       </ul>
       {% endif %}
       <button class="navbar-toggler white navbar-dark " type="button" data-bs-toggle="collapse"

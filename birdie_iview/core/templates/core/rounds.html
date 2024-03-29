@@ -6,16 +6,18 @@
 {% if user.is_authenticated %}
 
 <!-- Stats per clubs -->
+<div class="content-section">
+
 <h1>All Time Club Stats</h1>
 <div class="content-section">
     <div id="clubs" class="table-responsive">
         <table id="clubs-body" class="table">
             <thead>
                 <tr>
-                    <th scope="col">Club</th>
-                    <th scope="col">Total Shots</th>
-                    <th scope="col">Average Shot (yds)</th>
-                    <th scope="col">Furthest Shot (yds)</th>
+                    <th class="stats-th" scope="col">Club</th>
+                    <th class="stats-th" scope="col">Total Shots</th>
+                    <th class="stats-th" scope="col">Average Shot (yds)</th>
+                    <th class="stats-th" scope="col">Furthest Shot (yds)</th>
                 </tr>
             </thead>
 
@@ -36,29 +38,30 @@
         </table>
     </div>
 </div>
+</div>
 
-
+<div class="content-section">
 <h1>Rounds You've Played Details</h1>
 {% for round_item in round %}
 <div class="content-section">
     <div id="round" class="table-responsive">
-        <h3>Round Date:{{ round_item.round_date }}  Course: {{ round_item.course }}</h3>
+        <h3><strong>Round Date:</strong> {{ round_item.round_date|date:"d-M-Y" }} <span class="table-head-right"><strong>Course: </strong>{{ round_item.course }}</span></h3>
         <table id="round-body" class="table">
-            <thead>
+            <thead class="stats-th">
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Hole Number</th>
-                    <th scope="col">Par</th>
-                    <th scope="col">Shot Per Hole</th>
-                    <th scope="col">Club</th>
-                    <th scope="col">Shot Distance</th>
+                    <th class="stats-th" scope="col">#</th>
+                    <th class="stats-th" scope="col">Hole Number</th>
+                    <th class="stats-th" scope="col">Par</th>
+                    <th class="stats-th" scope="col">Hole Shot</th>
+                    <th class="stats-th" scope="col">Club</th>
+                    <th class="stats-th" scope="col">Shot Distance</th>
                 </tr>
             </thead>
 
             <tbody>
                 {% for shot in round_item.shot_set.all %}
                 <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
+                    <th class="stats-th" scope="row">{{ forloop.counter }}</th>
                     <td>{{ shot.hole_num }}</td>
                     <td>{{ shot.hole_par }}</td>
                     <td>{{ shot.shot_num_per_hole|add:1 }}</td>
@@ -69,6 +72,7 @@
             </tbody>
         </table>
     </div>
+</div>
 </div>
 {% endfor %}
 

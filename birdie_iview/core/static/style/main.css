@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
 body {
   background-image: url(https://athunder79.github.io/imagehost/images/background.png);
   background-attachment: fixed;
@@ -5,11 +7,12 @@ body {
   background-color: #787676;
   background-blend-mode: overlay;
   margin-top: 5rem;
+  font-family: "Montserrat", sans-serif;
 }
 
 
-.bg-green {
-  background-color: #257551;
+.bg-nav {
+  background-color: #092635;
 }
 
 .site-header .navbar-nav .nav-link {
@@ -32,9 +35,9 @@ body {
 
 /* alert messages override bootstrap */
 .alert {
-  color: #f6071e;
-  background-color: #fdfafa;
-  border-color: #e60e25;
+  color: #fbf6f7;
+  background-color: #dc2d2d;
+  border-color: #dc2d2d;
   padding: 10px;
   margin-bottom: 20px;
   border-radius: 0px;
@@ -46,6 +49,17 @@ body {
   border: 1px solid #dddddd;
   border-radius: 3px;
   margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.stats-th {
+  font-weight: bolder;
+  color: black;
+}
+
+.table-head-right {
+  float: right;
+
 }
 
 .scorecard {
@@ -57,7 +71,7 @@ body {
 }
 
 .underpar {
-  background-color: #7cea7c;
+  background-color: #94e894;
 }
 
 .par {
@@ -65,16 +79,18 @@ body {
 }
 
 .overpar {
-  background-color: #bc3c3c;
+  background-color: #c96666;
 }
 
 caption {
-  border-radius: 8px 8px 0px 0px;
+  margin: 0 auto;
+  
   margin-block-end: 0em;
   color: #fefdfd;
-  background-color: #5246a9cc;
+  background-color: #1B1A55;
   margin-bottom: none;
-  margin-top: 20px;
+  padding: 10px 0px 0px 0px;
+  text-align: center;
 }
 
 .tables {
@@ -82,30 +98,29 @@ caption {
   caption-side: top;
   border-collapse: unset; 
 
-  border-radius: 0px 0px 8px 8px;
   /* box-shadow: 0 4px 8px #050505; */
   font-size: 12px;
-  width: 100%;
+  width: 60%;
   text-align: center;
   border: none;
-  background-color: #5246a9cc;
+  background-color: #1B1A55;
   padding-bottom: 4px;
   padding-left: 1px;
   padding-right: 1px;
   padding-top: 15px;
+  margin-bottom: 20px;
 
 }
 
 .tableTotal {
   caption-side: top;
   border-collapse: unset; 
-  border-radius: 0px 0px 8px 8px;
   /* box-shadow: 0 4px 8px #050505; */
   font-size: 12px;
-  width: 60%;
+  width: 50%;
   text-align: center;
   border: solid;
-  background-color: #5246a9cc;
+  background-color: #1B1A55;
   border: none;
   padding-bottom: 5px;
   padding-left: 1px;
@@ -118,34 +133,120 @@ caption {
   font-size: 10px;
 }
 
-/*  big heading for hole number when submitting shot*/
-.hole-heading {
-  font-size: 60px;
-  font-weight: bold;
-  color: #ecf4f0;
-  text-align: center;
-  background-color: #3811d5;
-
+.add-shot-button, .at-ball-button  {
+  background-color:#28665c;
+  color: white;
+  border-color: #28665c;
+  padding:18px;
+  font-size:x-large;
+  font-weight: bolder;
+  
 }
 
-.shot-heading {
+.show-map-button {
+  margin-top: 50px;
+  background-color:#28665c;
+  color: white;
+  border-color: #28665c;
+}
+
+.in-hole-button {
+  background-color: #6ddf80;
+  color: white;
+  border-color: #6ddf80;
+  padding: 18px;
+  font-size: x-large;
+  font-weight: bolder;
+}
+
+.or{
+  text-align: center;
+  margin: 0 auto;
+  color: #1b1a1a;
+  font-weight: bolder;
+  font-size: x-large;
+  
+}
+
+.clubs{
+  font-size: 20px;
+  font-weight: bolder;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.finish-round-button {
+  background-color: #d30808;
+  color: white;
+  border-color: #d30808;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.hole-heading {
+  margin: 0 auto;
+  margin-top: 5px;
+  border-radius: 5px;
   font-size: 50px;
   font-weight: bold;
   color: #ecf4f0;
   text-align: center;
-  background-color: #3811d5;
+  background-color: #1B1A55;
+  width: 70%;
 
+}
+
+.shot-heading {
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 8px; 
+  border-radius: 5px;
+  font-size: 40px;
+  color: #ecf4f0;
+  text-align: center;
+  background-color: #1B1A55;
+  width: 60%;
+  
+
+}
+
+.last-shot {
+  margin: 0 auto;
+  border-radius: 5px;
+  padding: 5px;
+  color: #ecf4f0;
+  text-align: center;
+  background-color: #464e7c;
+  width: 50%;
 }
 
 .back9heading th {
   font-size: 10px;
 }
 
+/* style dropdown on shot form */
+
+#id_club, #id_hole_par, #id_hole_distance {
+  margin:0 auto;
+  width: 50%;
+}
+
+
 
 td {
   /* border:solid; */
   border-style: collapse;
-  background-color: beige;
+  background-color: #fcfcfa;
+  padding: .5em;
+}
+
+th {
+  /* border:solid; */
+  border-style: collapse;
+color: #ecf4f0;
   padding: .5em;
 }
 
@@ -154,7 +255,6 @@ map {
   width: 100%;
   height: 100%;
 }
-
 
 .account-heading {
   font-size: 2.5rem;
@@ -175,11 +275,14 @@ map {
    
 }
 #golf-courses {
-  
   width: 50%;     
 }
 
-.white {
-  color: white;
-}
+/* media query for mobile */
+@media screen and (max-width: 800px) {
+  .hole-heading, .shot-heading, .last-shot {
+    width: 100%;
+  }
 
+  
+}

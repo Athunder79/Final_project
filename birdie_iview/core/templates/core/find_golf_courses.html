@@ -4,19 +4,23 @@
 {% csrf_token %}
 
 <div id="map"></div>
+<div class="content-section">
 <div id="golf-courses">
     <h2>Golf Courses Near You</h2>
+    </div>
     <ul>
         {% for course in golf_courses %}
         <li>
+            <div class="content-section">
             <strong>{{ course.name }}</strong><br>
             Address: {{ course.address }}<br>
             Rating: {% if course.rating %}{{ course.rating }}{% else %}N/A{% endif %}<br>
             Distance: {{ course.distance }}
+            </div>
         </li>
         {% endfor %}
     </ul>
-    <p>setting{{ settings.GOOGLE_MAPS_API_KEY }}</p>
+
 </div>
 
 <!-- Load Google Maps JavaScript API -->

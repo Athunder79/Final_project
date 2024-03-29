@@ -4,18 +4,18 @@
 <div class="content-section">
     <div class="media">
         <div class="media-body">
-            <h2 class="account-heading">Username: {{ user.username }}</h2>
-            <p class="text-secondary">Email: {{ user.email }}</p>
-            <h1>In The Bag</h1>
+            <h1 class="underline">Clubs in {{ user.username }}'s Bag:</h1>
+            <ul>
             {% for club in user_clubs %}
-                <p>{{ club.club_name }}</p>
+                <li class="clubs">{{ club.club_name }}</li>
             {% endfor %}
+            </ul>
         </div>
     </div>
     <form method="POST" enctype="multipart/form-data"> <!-- Added an encoding type to save the image in the background -->
         {% csrf_token %}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Add a Club to your bag</legend> <!-- Updated ledgend to display Profile Info -->
+            <legend class="border-bottom mb-4">Add a Clubs to your bag</legend> <!-- Updated ledgend to display Profile Info -->
             {{ c_form|crispy }} <!-- Updated to load the user form and let crispy take care of the formating -->
 
         </fieldset>

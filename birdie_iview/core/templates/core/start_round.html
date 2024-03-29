@@ -3,12 +3,16 @@
 {% block content %}
 {% csrf_token %}
 
-    <h2>Start Round</h2>
+<div class="content-section">
+        <h2>Start Round</h2>
+
     <form id="roundForm" method="POST">
         {% csrf_token %}
 
         {{ form|crispy}}
     <button type="submit" class="btn btn-primary">Start Round</button>
     </form>
+
+</div>
 
 {% endblock %}
