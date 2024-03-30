@@ -421,7 +421,8 @@ class ScoreListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['round'] = Round.objects.filter(user=self.request.user)
+        rounds = Round.objects.filter(user=self.request.user).order_by('-round_date')
+        context['round'] = rounds
 
         # Query to calculate statistics per club for all shots
         shots_per_club_all = (
@@ -437,7 +438,6 @@ class ScoreListView(LoginRequiredMixin, ListView):
             .annotate(furthest_distance=Max('shot_distance'))
         )
         context['furthest_shots_per_club'] = furthest_shots_per_club
-
 
         return context
 

@@ -14,7 +14,24 @@ addEventListener('DOMContentLoaded', function () {
   if (nextHole != null){nextHole.addEventListener("click", updateShotEndPosition);}
   if (currentHole != null){colourCells();}
   if (atMyBall != null){atMyBall.addEventListener("click", updateShotEndShotPosition);}
-})
+
+
+  let roundHeadings = document.querySelectorAll('h3.round-heading');
+
+  // Add event listener to each h3 element
+  roundHeadings.forEach(heading => {
+    heading.addEventListener('click', function () {
+      
+      // Toggle hide class on the next sibling of the h3 element
+      let roundDetails = heading.nextElementSibling;
+      roundDetails.classList.toggle('hide');
+    });
+  });
+});
+  
+
+
+
 
 
 // Get the latitude and longitude from browser for shot form
@@ -107,3 +124,4 @@ function colourCells() {
       document.getElementById("scor" + i).className = "par";
   }
 }
+

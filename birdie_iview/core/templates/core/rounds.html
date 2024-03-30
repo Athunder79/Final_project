@@ -41,12 +41,17 @@
 </div>
 </div>
 
+<div class="content-section">
+
+    <h3><strong>Your Rounds</strong></h3>
+</div>
 
 {% for round_item in round %}
+
 <div class="content-section">
-    <h3 class="round-heading"><strong>{{ round_item.round_date|date:"d-M-Y" }} <span class="table-head-right">{{ round_item.course }}</span></strong></h3>
-<div class="content-section">
-    <div id="round" class="table-responsive">
+    <h3 class="round-heading"><strong>Show/Hide &nbsp;&nbsp;&nbsp;&nbsp; {{ round_item.course }}<span class="table-head-right">{{ round_item.round_date|date:"d-M-Y" }}</span></strong></h3>
+<div class="content-section round-details hide">
+    <div id="round-{{ round_item.id }}" class="table-responsive">
         <table id="round-body" class="table">
             <thead class="stats-th">
                 <tr>
@@ -75,7 +80,12 @@
     </div>
 </div>
 </div>
+
+
+
+
 {% endfor %}
+
 
 {% endif %}
 {% endblock %}
