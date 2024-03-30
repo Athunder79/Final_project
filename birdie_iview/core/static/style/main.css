@@ -35,8 +35,9 @@ body {
 
 /* alert messages override bootstrap */
 .alert {
-  color: #fbf6f7;
-  background-color: #dc2d2d;
+  margin: 0 auto;
+  color: #dc2d2d;
+  background-color: #fbf6f7;
   border-color: #dc2d2d;
   padding: 10px;
   margin-bottom: 20px;

@@ -34,10 +34,10 @@ def start_round(request):
         last_open_round = Round.objects.filter(user=request.user, round_completed=False).last()
         # check it hole exists for the round
         if Hole.objects.filter(round=last_open_round).exists():
-            messages.error(request, "You have a round in progress. Please complete the round before starting a new one or finish it early.")
+            messages.error(request, "You have a round in progress. Please complete the round or finish it early using the button at the bottom of this page.")
             return redirect('scorecard', hole_id=Hole.objects.filter(round__user=request.user).last().id)
         else:
-            messages.error(request, "You have a round in progress. Please complete the round before starting a new one or finish it early.")
+            messages.error(request, "You have a round in progress. Please complete the round or finish it early using the button at the bottom of this page.")
             return redirect('hole-details', course_id=last_open_round.course.id, round_id=last_open_round.id)
     
 

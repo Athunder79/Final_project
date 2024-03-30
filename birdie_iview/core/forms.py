@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Div
+from django.core.exceptions import ValidationError
 from django import forms
 from .models import Shot, Round, Course, Hole ,Clubs
 
@@ -30,8 +31,7 @@ ShotForm.base_fields['latitude'].widget = HideInput()
 ShotForm.base_fields['longitude'].widget = HideInput()
 
 class RoundForm(forms.ModelForm):
-    # Define the course field
-    course = forms.ChoiceField(label='Course', required=True)
+    course = forms.ModelChoiceField(label='Course', queryset=Course.objects.all(), required=True)
 
     class Meta:
         model = Round
@@ -39,8 +39,8 @@ class RoundForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RoundForm, self).__init__(*args, **kwargs)
-        self.fields['course'].widget = forms.Select()  # Use Select widget for the course field
-        self.fields['course'].choices = self.get_course_choices()  # Populate choices dynamically
+        self.fields['course'].widget = forms.Select()  
+        self.fields['course'].choices = self.get_course_choices()  
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -48,11 +48,8 @@ class RoundForm(forms.ModelForm):
         )
 
     def get_course_choices(self):
-        # Retrieve existing course choices from the database
         existing_courses = Course.objects.all().values_list('id', 'name')
-        # Convert course choices to the required format for the Select widget
         course_choices = [(str(course[0]), course[1]) for course in existing_courses]
-        # Add an additional option for free text input
         course_choices.insert(0, ('', 'Select or type course name...'))
         return course_choices
 
@@ -60,12 +57,8 @@ class HoleForm(forms.ModelForm):
     class Meta:
         model = Hole
         fields = ['hole_num', 'hole_par', 'hole_distance']
-        widgets = {
-            'hole_num': forms.HiddenInput(),  
-        }
-        labels = {
-            'hole_par': 'Select Par',  
-        }
+        widgets = {'hole_num': forms.HiddenInput()}
+        labels = {'hole_par': 'Select Par'}
 
     PAR_CHOICES = (
         ('', 'Select Par'),  
@@ -88,3 +81,13 @@ class HoleForm(forms.ModelForm):
             Field('hole_par', id='hole_par'),
             Field('hole_distance', id='hole_distance'),
         )
+
+    def clean_hole_distance(self):
+        hole_distance = self.cleaned_data.get('hole_distance')
+        try:
+            hole_distance = float(hole_distance)
+            if hole_distance < 0:
+                raise ValidationError('Distance cannot be negative')
+        except (TypeError, ValueError):
+            raise ValidationError('Invalid distance entered, please enter a number')
+        return hole_distance

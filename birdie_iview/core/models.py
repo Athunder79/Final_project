@@ -29,7 +29,7 @@ class Round(models.Model):
 
 
     def __str__(self):
-        self.round_date
+        return str(self.round_date)
 
 class Hole(models.Model):
     id = models.AutoField(primary_key=True)
