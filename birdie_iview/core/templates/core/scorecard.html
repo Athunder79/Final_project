@@ -23,7 +23,7 @@
         <legend class="border-bottom mb-4"></legend>
         {{ form|crispy }}
     </fieldset>
-    <div class="d-grid gap-2 col-6 mx-auto">
+    <div class="d-grid gap-2  mx-auto">
         <button id="location" class="btn btn-primary add-shot-button" type="button">Add Shot</button>
     </div>
     <br>
@@ -35,7 +35,7 @@
     action="{% url 'end-of-shot' course_id=current_hole.course.id round_id=current_hole.round.id hole_id=current_hole.id %}"
     method="POST">
     {% csrf_token %}
-    <div class="d-grid gap-2 col-6 mx-auto">
+    <div class="d-grid gap-2  mx-auto">
         <input type="hidden" id="end_shot_latitude" name="end_shot_latitude" value="">
         <input type="hidden" id="end_shot_longitude" name="end_shot_longitude" value="">
         <button id="at-my-ball" class="btn btn-primary at-ball-button" type="button">I'm at my ball</button>
@@ -53,7 +53,7 @@
     action="{% url 'next-hole' course_id=current_hole.course.id round_id=current_hole.round.id hole_id=current_hole.id %}"
     method="POST">
     {% csrf_token %}
-    <div class="d-grid gap-2 col-6 mx-auto">
+    <div class="d-grid gap-2 mx-auto">
         <input type="hidden" id="end_latitude" name="end_latitude" value="">
         <input type="hidden" id="end_longitude" name="end_longitude" value="">
         <button id="next-hole" class="btn btn-primary in-hole-button" type="button">In The Hole!</button>
@@ -65,7 +65,7 @@
 
 <!-- button to show or hide the map -->
 
-<div id="toggle-map" class="d-grid gap-2 col-6 mx-auto">
+<div id="toggle-map" class="d-grid gap-2 mx-auto">
     <button id="show-map" class="btn btn-primary show-map-button" type="button">Show Map</button>
 </div>
 
@@ -207,7 +207,7 @@
 
 <form action="{% url 'finish-round' round_id=current_hole.round.id %}" method="POST">
     {% csrf_token %}
-    <div class="d-grid gap-2 col-6 mx-auto">
+    <div class="d-grid gap-2 mx-auto">
         <button class="btn btn-primary finish-round-button" type="submit">Finish Round Early</button>
     </div>
 </form>

@@ -10,12 +10,12 @@
         <!-- <a href="{# url 'round-summary' round_id=round_id #}">Round Summary</a> -->
     {% else %}
     <div class="-details">
-        <h1 class="shot-heading"> Next Hole Number: {{ next_hole_num }}</h1>
+        <h1 class="shot-heading"> Next Hole: {{ next_hole_num }}</h1>
         <form id="roundForm" method="POST">
     {% csrf_token %}
 
     {{ form|crispy}}
-            <div class="d-grid gap-2 col-6 mx-auto">
+            <div class="d-grid gap-2  mx-auto">
                 <button type="submit" class="btn btn-primary add-shot-button">Start Hole</button>
             </div>
         </form>
@@ -24,7 +24,7 @@
     
     <form action="{% url 'finish-round' round_id=round_id %}" method="POST">
         {% csrf_token %}
-        <div class="d-grid gap-2 col-6 mx-auto">
+        <div class="d-grid gap-2 mx-auto">
             <button class="btn btn-primary finish-round-button" type="submit">Finish Round Early</button>
         </div>
     </form>

@@ -129,27 +129,43 @@ caption {
 
 }
 
+.round-heading{
+  font-size: 2.5rem;
+  color: #1B1A55;
+  font-size: small;
+}
+
+.table{
+  font-size: x-small;
+}
+
 .back9heading th {
   font-size: 10px;
 }
 
 .add-shot-button, .at-ball-button  {
+  margin:0 auto;
   background-color:#28665c;
   color: white;
   border-color: #28665c; 
+  width: 50%;
 }
 
 .show-map-button {
+  margin:0 auto;
   margin-top: 50px;
   background-color:#28665c;
   color: white;
   border-color: #28665c;
+  width: 40%;
 }
 
 .in-hole-button {
+  margin:0 auto;
   background-color: #6ddf80;
   color: white;
   border-color: #6ddf80;
+  width: 50%;
 }
 
 .or{
@@ -171,11 +187,13 @@ caption {
 }
 
 .finish-round-button {
+  margin:0 auto;
   background-color: #d30808;
   color: white;
   border-color: #d30808;
   margin-bottom: 30px;
   margin-top: 30px;
+  width: 50%;
 }
 
 .hole-heading {
@@ -201,15 +219,17 @@ caption {
   color: #ecf4f0;
   text-align: center;
   background-color: #1B1A55;
-  width: 60%;
-  
+  width: 70%;
 
 }
+
+
 
 .last-shot {
   margin: 0 auto;
   border-radius: 5px;
-  padding: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   color: #ecf4f0;
   text-align: center;
   background-color: #464e7c;
@@ -271,14 +291,20 @@ map {
   width: 50%;     
 }
 
+
 /* media query for mobile */
 @media screen and (max-width: 800px) {
-  .hole-heading, .shot-heading, .last-shot, .tables, .tableTotal 
+  .hole-heading, .shot-heading,  .tables, .tableTotal, .last-shot
    {
     width: 100%;
   }
 
-
+  .in-hole-button, .add-shot-button, .at-ball-button, .finish-round-button {
+    width: 85%;
+  
   }
+
+
+
 
 

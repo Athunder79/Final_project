@@ -44,18 +44,18 @@
 
 {% for round_item in round %}
 <div class="content-section">
-    <h3><strong>Round Date:&nbsp; {{ round_item.round_date|date:"d-M-Y" }} <span class="table-head-right">Course:&nbsp;&nbsp;{{ round_item.course }}</span></strong></h3>
+    <h3 class="round-heading"><strong>{{ round_item.round_date|date:"d-M-Y" }} <span class="table-head-right">{{ round_item.course }}</span></strong></h3>
 <div class="content-section">
     <div id="round" class="table-responsive">
         <table id="round-body" class="table">
             <thead class="stats-th">
                 <tr>
                     <th class="stats-th" scope="col">#</th>
-                    <th class="stats-th" scope="col">Hole Number</th>
+                    <th class="stats-th" scope="col">Hole</th>
                     <th class="stats-th" scope="col">Par</th>
-                    <th class="stats-th" scope="col">Hole Shot</th>
+                    <th class="stats-th" scope="col">Hole/Shot</th>
                     <th class="stats-th" scope="col">Club</th>
-                    <th class="stats-th" scope="col">Shot Distance</th>
+                    <th class="stats-th" scope="col">Dist</th>
                 </tr>
             </thead>
 
