@@ -93,7 +93,6 @@ def hole_details(request, course_id, round_id):
 
     return render(request, 'core/hole_details.html', {'next_hole_num': next_hole_num,'form': form, 'round_id': round_id})
 
-
 # shot tracking and scorecard
 @login_required
 def scorecard(request, hole_id):
@@ -140,31 +139,16 @@ def scorecard(request, hole_id):
     in_total_shots = sum(hole.shot_count for hole in holes[:9])
     in_total_score = in_total_shots - in_total_par
 
-    print('in_total_dist:', in_total_dist)
-    print('in_total_par:', in_total_par)
-    print('in_total_shots:', in_total_shots)
-    print('in_total_score:', in_total_score)
-
     out_total_dist = sum(hole.hole_distance for hole in holes[9:])
     out_total_par = sum(hole.hole_par for hole in holes[9:])
     out_total_shots = sum(hole.shot_count for hole in holes[9:])
     out_total_score = out_total_shots - out_total_par
-
-    print('out_total_dist:', out_total_dist)
-    print('out_total_par:', out_total_par)
-    print('out_total_shots:', out_total_shots)
-    print('out_total_score:', out_total_score)
-
 
     total_distance = in_total_dist + out_total_dist
     total_par = total_par 
     total_shots = total_shots 
     total_score = total_shots - total_par
 
-    print('total_distance:', total_distance)
-    print('total_par:', total_par)
-    print('total_shots:', total_shots)
-    print('total_score:', total_score)
 
     # Get data from the form
     if request.method == 'POST':
@@ -332,6 +316,7 @@ def next_hole(request, hole_id, course_id, round_id):
 
     return redirect(hole_details, course_id=course_id, round_id=round_id)
     
+
 def find_golf_courses(request:HttpRequest):
     gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
     key = settings.GOOGLE_MAPS_API_KEY

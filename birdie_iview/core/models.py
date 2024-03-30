@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,null=False, blank=False)
     address = models.CharField(max_length=255)
     rating = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)

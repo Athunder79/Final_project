@@ -144,15 +144,19 @@ caption {
 }
 
 .add-shot-button, .at-ball-button  {
+  /* round corners */
+  border-radius: 20px;
   margin:0 auto;
-  background-color:#28665c;
+  background-color:#3342d4;
   color: white;
-  border-color: #28665c; 
+  border-color: #3342d4; 
   width: 50%;
 }
 
 .show-map-button {
+
   margin:0 auto;
+  border-radius: 20px;
   margin-top: 50px;
   background-color:#28665c;
   color: white;
@@ -161,19 +165,24 @@ caption {
 }
 
 .in-hole-button {
+  border-radius: 20px;
   margin:0 auto;
-  background-color: #6ddf80;
+  background-color: #0cb15c;
   color: white;
-  border-color: #6ddf80;
+  border-color: #0cb15c;
   width: 50%;
 }
 
 .or{
+  
+  border-radius: 20px;
   text-align: center;
   margin: 0 auto;
   color: #1b1a1a;
   font-weight: bolder;
-  font-size: x-large;
+  font-size: 20px;
+  background-color: #ecf4f0;
+  width: 40px;
   
 }
 
@@ -220,6 +229,12 @@ caption {
   text-align: center;
   background-color: #1B1A55;
   width: 70%;
+
+}
+
+button {
+
+  border-radius: 25px;
 
 }
 

@@ -3,7 +3,7 @@ addEventListener('DOMContentLoaded', function () {
 
 
   let location = document.getElementById("location");
-  let map = document.getElementById("toggle-map");
+  let map = document.getElementById("show-map");
   let nextHole = document.getElementById("next-hole");
   let currentHole = document.getElementById("current-hole");
   let atMyBall = document.getElementById("at-my-ball");

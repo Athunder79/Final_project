@@ -13,7 +13,7 @@ class ShotForm(forms.ModelForm):
         super(ShotForm, self).__init__(*args, **kwargs)
         self.fields['club'].queryset = Clubs.objects.filter(user=user)
         self.fields['club'].empty_label = 'Select a club'
-        self.fields['club'].label = ''
+        self.fields['club'].label = ''  
         self.helper = FormHelper()
         self.helper.form_show_labels = False 
         self.helper.layout = Layout(
@@ -30,16 +30,31 @@ ShotForm.base_fields['latitude'].widget = HideInput()
 ShotForm.base_fields['longitude'].widget = HideInput()
 
 class RoundForm(forms.ModelForm):
+    # Define the course field
+    course = forms.ChoiceField(label='Course', required=True)
+
     class Meta:
         model = Round
         fields = ['course']
 
     def __init__(self, *args, **kwargs):
         super(RoundForm, self).__init__(*args, **kwargs)
+        self.fields['course'].widget = forms.Select()  # Use Select widget for the course field
+        self.fields['course'].choices = self.get_course_choices()  # Populate choices dynamically
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field('course', id='course'),
         )
+
+    def get_course_choices(self):
+        # Retrieve existing course choices from the database
+        existing_courses = Course.objects.all().values_list('id', 'name')
+        # Convert course choices to the required format for the Select widget
+        course_choices = [(str(course[0]), course[1]) for course in existing_courses]
+        # Add an additional option for free text input
+        course_choices.insert(0, ('', 'Select or type course name...'))
+        return course_choices
 
 class HoleForm(forms.ModelForm):
     class Meta:
