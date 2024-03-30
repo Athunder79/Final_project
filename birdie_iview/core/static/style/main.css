@@ -136,11 +136,7 @@ caption {
 .add-shot-button, .at-ball-button  {
   background-color:#28665c;
   color: white;
-  border-color: #28665c;
-  padding:18px;
-  font-size:x-large;
-  font-weight: bolder;
-  
+  border-color: #28665c; 
 }
 
 .show-map-button {
@@ -154,9 +150,6 @@ caption {
   background-color: #6ddf80;
   color: white;
   border-color: #6ddf80;
-  padding: 18px;
-  font-size: x-large;
-  font-weight: bolder;
 }
 
 .or{
@@ -280,12 +273,12 @@ map {
 
 /* media query for mobile */
 @media screen and (max-width: 800px) {
-  .hole-heading, .shot-heading, .last-shot, .tables, .tableTotal,  {
+  .hole-heading, .shot-heading, .last-shot, .tables, .tableTotal 
+   {
     width: 100%;
   }
 
-  .in-hole-button, .add-shot-button, .at-ball-button, .show-map-button, .finish-round-button {
-    width: 90%;
+
   }
 
-}
+

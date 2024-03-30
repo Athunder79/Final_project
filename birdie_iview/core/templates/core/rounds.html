@@ -17,9 +17,9 @@
             <thead>
                 <tr>
                     <th class="stats-th" scope="col">Club</th>
-                    <th class="stats-th" scope="col">Total Shots</th>
-                    <th class="stats-th" scope="col">Average Shot (yds)</th>
-                    <th class="stats-th" scope="col">Furthest Shot (yds)</th>
+                    <th class="stats-th" scope="col">Shots</th>
+                    <th class="stats-th" scope="col">Avg (yds)</th>
+                    <th class="stats-th" scope="col">Longest (yds)</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,17 +72,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        <div id="map-container" class="linkholder hide">
-            <div class="mapholder">
-                <div id="map"></div>
-                <script>
-                    const roundId = {{ round_id }};
-                    const mapShotsUrl = "{% url 'map-shots' %}";
-                </script>
-                <script src="{% static 'script/map.js' %}"></script>
-                <script src="https://maps.googleapis.com/maps/api/js?key={{key}}&loading=async&callback=initMap"></script>
-            </div>
-        </div>
     </div>
 </div>
 </div>
