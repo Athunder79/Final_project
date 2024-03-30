@@ -168,7 +168,7 @@
             </tr>
             <tr>
                 <td>Score</td>
-                {% for running_score in running_scores|slice:"9:" %}
+                {% for running_score in running_scores_back_nine %}
                 <td>{{ running_score }}</td>
                 {% endfor %}
                 <td id="totalBkOu">{{ out_total_score }}</td>
