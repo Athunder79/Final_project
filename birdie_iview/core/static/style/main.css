@@ -4,7 +4,7 @@ body {
   background-image: url(https://athunder79.github.io/imagehost/images/background.png);
   background-attachment: fixed;
   background-size: cover;
-  background-color: #787676;
+  background-color: #a9a7a7;
   background-blend-mode: overlay;
   margin-top: 5rem;
   font-family: "Montserrat", sans-serif;
@@ -34,7 +34,7 @@ body {
 }
 
 /* alert messages override bootstrap */
-.alert {
+.alert, .alert-error {
   margin: 0 auto;
   color: #dc2d2d;
   background-color: #fbf6f7;
@@ -42,6 +42,7 @@ body {
   padding: 10px;
   margin-bottom: 20px;
   border-radius: 0px;
+  text-align: center;
 }
 
 .content-section {
@@ -198,6 +199,7 @@ caption {
 
 .finish-round-button {
   margin:0 auto;
+  border-radius: 20px;
   background-color: #d30808;
   color: white;
   border-color: #d30808;
@@ -321,6 +323,4 @@ map {
   }
 
 
-
-
-
+}
